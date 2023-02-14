@@ -5,7 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
 import 'package:job_portal/screens/sign_up/view/sign_up.dart';
 
-class SignIn extends StatelessWidget {
+import 'widgets/sign_in_buttons.dart';
+import 'widgets/textformfields_widgets.dart';
+
+class SignIn extends GetView<SignInController> {
   SignIn({super.key});
 
   final formKey = GlobalKey<FormState>();
@@ -45,87 +48,10 @@ class SignIn extends StatelessWidget {
                     SizedBox(
                       height: height * 0.06,
                     ),
-                    TextFormField(
-                      controller: signInController.emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.white70,
-                        prefixIcon: const Icon(
-                          Icons.email,
-                          color: Colors.black,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.black),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.red),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.red),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: height * 0.025,
-                    ),
-                    TextFormField(
-                      controller: signInController.passwordController,
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: signInController.obscureText,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.white70,
-                        prefixIcon: const Icon(
-                          Icons.lock,
-                          color: Colors.black,
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            signInController.visibility();
-                          },
-                          icon: signInController.visibilityIcon,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.black),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.red),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.red),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: height * 0.009,
-                    ),
+
+                    //textfields for login/password
+                    SignInTextfieldsWidget(signInController: signInController),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -138,88 +64,14 @@ class SignIn extends StatelessWidget {
                     SizedBox(
                       height: height * 0.08,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        if (GetUtils.isEmail(
-                            signInController.emailController.text)) {
-                          print('object');
-                        } else {
-                          Get.snackbar('title', 'sdhfkjskjdfh');
-                        }
-                      },
-                      child: Container(
-                        height: height * 0.056,
-                        width: width * 0.9,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(width * 0.02),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              const Center(
-                                child: Text(
-                                  'SIGN IN',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                              SizedBox(
-                                width: width * 0.319,
-                              ),
-                              const Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+
+                    //sign in buttons
+                    SignInButtons(
+                      signInController: signInController,
+                      height: height,
+                      width: width,
                     ),
-                    SizedBox(
-                      height: height * 0.015,
-                    ),
-                    const Text('OR'),
-                    SizedBox(
-                      height: height * 0.015,
-                    ),
-                    Container(
-                      height: height * 0.056,
-                      width: width * 0.9,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 230, 230, 230),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(width * 0.02),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            SizedBox(
-                              height: 28,
-                              width: 28,
-                              child: Image(
-                                image: AssetImage(
-                                  'assets/images/googlelogo.png',
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'Connect with Google',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.black,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+
                     SizedBox(
                       height: height * 0.055,
                     ),
