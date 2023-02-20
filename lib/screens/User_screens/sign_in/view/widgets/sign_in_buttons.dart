@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:job_portal/screens/home/view/home_screen.dart';
 import 'package:job_portal/widgets/bottom_nav.dart';
 
 import '../../controller/sign_in_controller.dart';

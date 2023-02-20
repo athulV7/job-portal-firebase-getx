@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:job_portal/screens/home/controller/bottom_navbar_controller.dart';
+import 'package:job_portal/screens/User_screens/home/controller/bottom_navbar_controller.dart';
 
 class BottomNavbar extends GetView<BottomNavbarController> {
   BottomNavbar({super.key});
@@ -23,6 +23,10 @@ class BottomNavbar extends GetView<BottomNavbarController> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.card_travel),
+              label: 'Jobs',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite_border_outlined),
