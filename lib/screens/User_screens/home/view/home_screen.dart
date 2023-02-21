@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
+import 'package:job_portal/screens/User_screens/sign_in/controller/sign_in_controller.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  final signInController = Get.put(SignInController());
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    signInController.googleSignOut();
+                  },
                   icon: Icon(
                     Icons.sms,
                     color: Colors.grey.shade800,

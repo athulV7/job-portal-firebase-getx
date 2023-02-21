@@ -8,11 +8,10 @@ import 'package:job_portal/screens/User_screens/sign_up/view/widgets/sign_up_but
 
 import 'widgets/textfields_widget.dart';
 
-class SignUpScreen extends GetView<SignUpController> {
+class SignUpScreen extends StatelessWidget {
   SignUpScreen({super.key});
 
-  //final signUpController = Get.put(SignInController());
-  final formKey = GlobalKey<FormState>();
+  final signUpController = Get.put(SignUpController());
 
   @override
   Widget build(BuildContext context) {
@@ -22,95 +21,94 @@ class SignUpScreen extends GetView<SignUpController> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.all(height * 0.02),
-        child: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Padding(
-              padding: EdgeInsets.only(top: height * 0.16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Getting Started',
-                    style: GoogleFonts.openSans(
-                      textStyle: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.01,
-                  ),
-                  Text(
-                    "Create an account to continue",
-                    style: GoogleFonts.openSans(
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.055,
-                  ),
-
-                  //creating textform fields
-                  TextformFieldWidget(height: height),
-
-                  SizedBox(
-                    height: height * 0.035,
-                  ),
-                  const Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                            text: 'By creating an account, you agree to our '),
-                        TextSpan(
-                          text: 'Terms & Conditions',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
+          padding: EdgeInsets.all(height * 0.02),
+          child: GetBuilder<SignUpController>(
+            builder: (controller) => SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(top: height * 0.12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Getting Started',
+                      style: GoogleFonts.openSans(
+                        textStyle: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: height * 0.06,
-                  ),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    Text(
+                      "Create an account to continue",
+                      style: GoogleFonts.openSans(
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: height * 0.055,
+                    ),
 
-                  //sign up buttons
-                  const SignUpOptionButtons(),
+                    //creating textform fields
+                    TextformFieldWidget(height: height),
 
-                  Center(
-                    child: Text.rich(
+                    SizedBox(
+                      height: height * 0.035,
+                    ),
+                    const Text.rich(
                       TextSpan(
                         children: [
-                          const TextSpan(text: "Already have an account?"),
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.baseline,
-                            baseline: TextBaseline.alphabetic,
-                            child: SizedBox(width: width * 0.02),
-                          ),
                           TextSpan(
-                            text: "Sign In",
-                            style: const TextStyle(color: Colors.blue),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Get.to(SignIn());
-                              },
+                              text:
+                                  'By creating an account, you agree to our '),
+                          TextSpan(
+                            text: 'Terms & Conditions',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: height * 0.06,
+                    ),
+
+                    //sign up buttons
+                    SignUpOptionButtons(),
+
+                    Center(
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            const TextSpan(text: "Already have an account?"),
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.baseline,
+                              baseline: TextBaseline.alphabetic,
+                              child: SizedBox(width: width * 0.02),
+                            ),
+                            TextSpan(
+                              text: "Sign In",
+                              style: const TextStyle(color: Colors.blue),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Get.off(SignIn());
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
+          )),
     );
   }
 }

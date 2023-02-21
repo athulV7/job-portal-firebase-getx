@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:job_portal/screens/User_screens/sign_in/view/sign_in.dart';
+import 'package:job_portal/screens/User_screens/Main_screen/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: GoogleFonts.montserrat().fontFamily,
       ),
-      home: SignIn(),
+      home: const MainScreen(),
     );
   }
 }

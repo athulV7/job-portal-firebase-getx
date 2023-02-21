@@ -1,8 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:job_portal/screens/User_screens/sign_in/controller/sign_in_controller.dart';
+import 'package:job_portal/screens/User_screens/sign_up/controller/sign_up_controller.dart';
+
+final formKeyUp = GlobalKey<FormState>();
 
 class SignUpOptionButtons extends StatelessWidget {
-  const SignUpOptionButtons({super.key});
+  SignUpOptionButtons({super.key});
+
+  final signInController = Get.put(SignInController());
+
+  final signUpController = Get.put(SignUpController());
 
   @override
   Widget build(BuildContext context) {
@@ -11,14 +21,7 @@ class SignUpOptionButtons extends StatelessWidget {
     return Wrap(
       children: [
         GestureDetector(
-          // onTap: () {
-          //   if (GetUtils.isEmail(
-          //       signInController.emailController.text)) {
-          //     print('object');
-          //   } else {
-          //     Get.snackbar('title', 'sdhfkjskjdfh');
-          //   }
-          // },
+          onTap: onSignUpButtonClicked,
           child: Container(
             height: height * 0.056,
             width: width * 0.9,
@@ -28,7 +31,7 @@ class SignUpOptionButtons extends StatelessWidget {
             ),
             child: const Center(
               child: Text(
-                'Send OTP',
+                'SIGN UP',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -43,40 +46,45 @@ class SignUpOptionButtons extends StatelessWidget {
         SizedBox(
           height: height * 0.03,
         ),
-        Container(
-          height: height * 0.056,
-          width: width * 0.9,
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 230, 230, 230),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(width * 0.02),
+        GestureDetector(
+          onTap: () {
+            signInController.googleLogIn();
+          },
+          child: Container(
+            height: height * 0.056,
+            width: width * 0.9,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 230, 230, 230),
+              borderRadius: BorderRadius.circular(15),
+            ),
             child: Padding(
-              padding: EdgeInsets.only(right: width * 0.03),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: width * 0.07,
-                    width: width * 0.07,
-                    child: const Image(
-                      image: AssetImage(
-                        'assets/images/googlelogo.png',
+              padding: EdgeInsets.all(width * 0.02),
+              child: Padding(
+                padding: EdgeInsets.only(right: width * 0.03),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: width * 0.07,
+                      width: width * 0.07,
+                      child: const Image(
+                        image: AssetImage(
+                          'assets/images/googlelogo.png',
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: width * 0.02,
-                  ),
-                  const Text(
-                    'Connect with Google',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
+                    SizedBox(
+                      width: width * 0.02,
                     ),
-                  ),
-                ],
+                    const Text(
+                      'Connect with Google',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -86,5 +94,44 @@ class SignUpOptionButtons extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void onSignUpButtonClicked() async {
+    if (formKeyUp.currentState!.validate()) {
+      //checking the user email is already exist in the collection
+      var collectionRef =
+          await FirebaseFirestore.instance.collection("Users").get();
+      if (collectionRef.docs
+          .where(
+            (element) =>
+                element.data()['Auth']['email'].toString() ==
+                signUpController.emailController.text,
+          )
+          .isEmpty) {
+        //sign up
+        await signUpController.signUp();
+
+        //add user details to firebase users collection
+        String uid = FirebaseAuth.instance.currentUser!.uid;
+        await FirebaseFirestore.instance.collection('Users').doc(uid).set({
+          'Auth': {
+            'email': signUpController.emailController.text,
+            'password': signUpController.passwordController.text,
+          },
+        });
+
+        signUpController.emailController.clear();
+        signUpController.passwordController.clear();
+        signUpController.confirmPasswordController.clear();
+      } else {
+        Get.snackbar(
+          'Email',
+          'This user is already exist',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    }
   }
 }

@@ -7,7 +7,7 @@ import 'package:job_portal/screens/User_screens/profile/view/profile_screen.dart
 class BottomNavbarController extends GetxController {
   var index = 0.obs;
 
-  final screens = const [
+  final screens = [
     HomeScreen(),
     FindJobs(),
     LikedJobs(),

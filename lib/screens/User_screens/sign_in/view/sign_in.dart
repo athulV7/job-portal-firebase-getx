@@ -11,7 +11,6 @@ import 'widgets/textformfields_widgets.dart';
 class SignIn extends GetView<SignInController> {
   SignIn({super.key});
 
-  final formKey = GlobalKey<FormState>();
   final signInController = Get.put(SignInController());
 
   @override
@@ -25,78 +24,75 @@ class SignIn extends GetView<SignInController> {
         padding: EdgeInsets.all(height * 0.02),
         child: GetBuilder<SignInController>(
           builder: (controller) => SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Padding(
-                padding: EdgeInsets.only(top: height * 0.07),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: height * 0.1),
-                      child: Center(
-                        child: Text(
-                          'Sign In',
-                          style: GoogleFonts.openSans(
-                            textStyle: const TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
-                            ),
+            child: Padding(
+              padding: EdgeInsets.only(top: height * 0.07),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: height * 0.1),
+                    child: Center(
+                      child: Text(
+                        'Sign In',
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: height * 0.06,
-                    ),
+                  ),
+                  SizedBox(
+                    height: height * 0.06,
+                  ),
 
-                    //textfields for login/password
-                    SignInTextfieldsWidget(signInController: signInController),
+                  //textfields for login/password
+                  SignInTextfieldsWidget(signInController: signInController),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text('forgot password?'),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * 0.08,
+                  ),
+
+                  //sign in buttons
+                  SignInButtons(
+                    signInController: signInController,
+                    height: height,
+                    width: width,
+                  ),
+
+                  SizedBox(
+                    height: height * 0.055,
+                  ),
+                  Text.rich(
+                    TextSpan(
                       children: [
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('forgot password?'),
+                        const TextSpan(text: "Don't have any account?"),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.baseline,
+                          baseline: TextBaseline.alphabetic,
+                          child: SizedBox(width: width * 0.02),
+                        ),
+                        TextSpan(
+                          text: "Sign Up",
+                          style: const TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Get.off(SignUpScreen());
+                            },
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: height * 0.08,
-                    ),
-
-                    //sign in buttons
-                    SignInButtons(
-                      signInController: signInController,
-                      height: height,
-                      width: width,
-                    ),
-
-                    SizedBox(
-                      height: height * 0.055,
-                    ),
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          const TextSpan(text: "Don't have any account?"),
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.baseline,
-                            baseline: TextBaseline.alphabetic,
-                            child: SizedBox(width: width * 0.02),
-                          ),
-                          TextSpan(
-                            text: "Sign Up",
-                            style: const TextStyle(color: Colors.blue),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Get.to(SignUpScreen());
-                              },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
