@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:job_portal/screens/User_screens/Main_screen/main_screen.dart';
+import 'package:job_portal/screens/Main_screen/main_screen.dart';
 
 class SignUpController extends GetxController {
   final TextEditingController emailController = TextEditingController();

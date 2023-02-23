@@ -1,27 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
+import 'package:job_portal/screens/sign_up/controller/sign_up_controller.dart';
 
-import '../../controller/sign_in_controller.dart';
+final formKeyUp = GlobalKey<FormState>();
 
-class SignInButtons extends StatelessWidget {
-  const SignInButtons({
-    Key? key,
-    required this.signInController,
-    required this.height,
-    required this.width,
-  }) : super(key: key);
+class SignUpOptionButtons extends StatelessWidget {
+  SignUpOptionButtons({super.key});
 
-  final SignInController signInController;
-  final double height;
-  final double width;
+  final signInController = Get.put(SignInController());
+
+  final signUpController = Get.put(SignUpController());
 
   @override
   Widget build(BuildContext context) {
+    final width = Get.size.width;
+    final height = Get.size.height;
     return Wrap(
       children: [
         GestureDetector(
-          onTap: onSignInButtonClicked,
+          onTap: onSignUpButtonClicked,
           child: Container(
             height: height * 0.056,
             width: width * 0.9,
@@ -31,10 +31,8 @@ class SignInButtons extends StatelessWidget {
             ),
             child: const Center(
               child: Text(
-                'SIGN IN',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+                'SIGN UP',
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ),
@@ -91,40 +89,44 @@ class SignInButtons extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(
+          height: height * 0.1,
+        ),
       ],
     );
   }
 
-  void onSignInButtonClicked() async {
-    if (signInController.formKey.currentState!.validate()) {
-      var collectionRefrnce =
+  void onSignUpButtonClicked() async {
+    if (formKeyUp.currentState!.validate()) {
+      //checking the user email is already exist in the collection
+      var collectionRef =
           await FirebaseFirestore.instance.collection("Users").get();
+      if (collectionRef.docs
+          .where(
+            (element) =>
+                element.data()['Auth']['email'].toString() ==
+                signUpController.emailController.text,
+          )
+          .isEmpty) {
+        //sign up
+        await signUpController.signUp();
 
-      //---------------checking user email is exist or not------------
-      var matchingUsers = collectionRefrnce.docs
-          .where((element) =>
-              element.data()['Auth']['email'] ==
-              signInController.emailController.text)
-          .toList();
-      if (matchingUsers.isNotEmpty) {
-        if (matchingUsers.first.data()['Auth']['password'] ==
-            signInController.passwordController.text) {
-          signInController.signIn();
-          signInController.emailController.clear();
-          signInController.passwordController.clear();
-        } else {
-          Get.snackbar(
-            'Error',
-            'password does not match',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
+        //add user details to firebase users collection
+        String uid = FirebaseAuth.instance.currentUser!.uid;
+        await FirebaseFirestore.instance.collection('Users').doc(uid).set({
+          'Auth': {
+            'email': signUpController.emailController.text,
+            'password': signUpController.passwordController.text,
+          },
+        });
+
+        signUpController.emailController.clear();
+        signUpController.passwordController.clear();
+        signUpController.confirmPasswordController.clear();
       } else {
         Get.snackbar(
-          'Error',
-          'User not exist. please sign in ',
+          'Email',
+          'This user is already exist',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,

@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:job_portal/screens/User_screens/sign_in/controller/sign_in_controller.dart';
-import 'package:job_portal/screens/User_screens/sign_up/view/sign_up.dart';
+import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
+import 'package:job_portal/screens/sign_up/view/sign_up.dart';
 
 import 'widgets/sign_in_buttons.dart';
 import 'widgets/textformfields_widgets.dart';

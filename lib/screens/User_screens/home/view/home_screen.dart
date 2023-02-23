@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
-import 'package:job_portal/screens/User_screens/sign_in/controller/sign_in_controller.dart';
+import 'package:job_portal/screens/Main_screen/main_screen.dart';
+import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -44,8 +45,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    signInController.googleSignOut();
+                  onPressed: () async {
+                    await signInController.googleSignOut();
+                    Get.offAll(MainScreen());
                   },
                   icon: Icon(
                     Icons.sms,

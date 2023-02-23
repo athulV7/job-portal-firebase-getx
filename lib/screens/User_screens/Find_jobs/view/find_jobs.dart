@@ -67,15 +67,7 @@ class FindJobs extends StatelessWidget {
               SizedBox(
                 height: height * 0.035,
               ),
-              Text(
-                'Popular Jobs',
-                style: GoogleFonts.robotoSlab(
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+              Text('Popular Jobs', style: subHeadlineStyle),
               SizedBox(
                 height: height * 0.02,
               ),
