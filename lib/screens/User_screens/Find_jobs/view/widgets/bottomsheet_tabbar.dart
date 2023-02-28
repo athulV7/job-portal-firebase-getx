@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/core/common.dart';
-import 'package:job_portal/screens/User_screens/home/view/widgets/company_tab.dart';
-import 'package:job_portal/screens/User_screens/home/view/widgets/job_description.dart';
+import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
+import 'package:job_portal/screens/User_screens/Find_jobs/view/widgets/company_tab.dart';
+import 'package:job_portal/screens/User_screens/Find_jobs/view/widgets/job_description.dart';
+import 'package:job_portal/screens/User_screens/Find_jobs/view/widgets/job_details_bottomSheet.dart';
 
 class BottomSheetTabBar extends StatelessWidget {
   const BottomSheetTabBar({
     Key? key,
+    required this.addJobModel,
   }) : super(key: key);
 
+  final AddJobModel addJobModel;
   //late TabController tabController;
   @override
   Widget build(BuildContext context) {
@@ -53,11 +57,11 @@ class BottomSheetTabBar extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(top: width * 0.06),
-              child: const TabBarView(
+              child: TabBarView(
                 children: [
-                  JobDescription(),
-                  CompanyTab(),
-                  Text("zxcv"),
+                  JobDescription(addJobModel: addJobModel),
+                  CompanyTab(addJobModel: addJobModel),
+                  JobDetailsBottomSheet(addJobModel: addJobModel),
                 ],
               ),
             ),

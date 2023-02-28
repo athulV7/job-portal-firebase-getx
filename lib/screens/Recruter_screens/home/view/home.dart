@@ -112,7 +112,10 @@ class RecruterHomeScreen extends StatelessWidget {
                         );
                       } else if (vacancyList.isNotEmpty) {
                         return VacancyJobsInHomeWidget(
-                            vacancyList: vacancyList);
+                          length:
+                              vacancyList.length > 2 ? 2 : vacancyList.length,
+                          vacancyList: vacancyList,
+                        );
                       } else {
                         return const SizedBox();
                       }
@@ -239,15 +242,17 @@ class RecruterHomeScreen extends StatelessWidget {
 class VacancyJobsInHomeWidget extends StatelessWidget {
   const VacancyJobsInHomeWidget({
     Key? key,
+    required this.length,
     required this.vacancyList,
   }) : super(key: key);
 
   final List<QueryDocumentSnapshot<Map<String, dynamic>>> vacancyList;
+  final int length;
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: vacancyList.length > 2 ? 2 : vacancyList.length,
+      itemCount: length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(top: 6),
@@ -352,27 +357,37 @@ class VacancyJobsInHomeWidget extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        color: Colors.transparent,
-                        padding: const EdgeInsets.all(5),
-                        height: 50,
-                        width: MediaQuery.of(context).size.width / 1.18,
-                        child: ListView(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            CustomMaterialButton(
-                              text: addJobModel.jobType!,
-                            ),
-                            // SizedBox(
-                            //   width: width * 0.02,
-                            // ),
-                            // const CustomMaterialButton(
-                            //   text: "Freelance",
-                            // ),
-                          ],
-                        ),
+                      CustomMaterialButton(
+                        text: addJobModel.jobType!,
                       ),
+                      SizedBox(
+                        width: width * 0.02,
+                      ),
+                      CustomMaterialButton(
+                        text: 'Expected Salary: ₹${addJobModel.salary}',
+                      ),
+
+                      // Container(
+                      //   color: Colors.transparent,
+                      //   padding: const EdgeInsets.all(5),
+                      //   height: 50,
+                      //   width: MediaQuery.of(context).size.width / 1.18,
+                      //   child: ListView(
+                      //     shrinkWrap: true,
+                      //     scrollDirection: Axis.horizontal,
+                      //     children: [
+                      //       // CustomMaterialButton(
+                      //       //   text: addJobModel.jobType!,
+                      //       // ),
+                      //       // SizedBox(
+                      //       //   width: width * 0.02,
+                      //       // ),
+                      //       // const CustomMaterialButton(
+                      //       //   text: "Freelance",
+                      //       // ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],

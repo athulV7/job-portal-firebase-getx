@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/screens/Main_screen/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:job_portal/screens/Role_select_screen/view/role_section_scr.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

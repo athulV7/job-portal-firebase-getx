@@ -202,7 +202,9 @@ class CustomMaterialButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
-        elevation: 1,
+        elevation: 0,
+        color: Colors.cyan.withOpacity(0.1),
+        textStyle: TextStyle(color: Colors.cyan.shade800),
         borderRadius: BorderRadius.circular(5),
         child: Padding(
           padding: EdgeInsets.all(width * 0.02),

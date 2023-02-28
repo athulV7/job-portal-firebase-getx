@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:job_portal/screens/Recruter_screens/home/view/home.dart';
 import 'package:job_portal/screens/Recruter_screens/widgets/recruter_bottom_nav.dart';
 import 'package:job_portal/screens/Role_select_screen/view/role_section_scr.dart';
 import 'package:job_portal/screens/sign_in/view/sign_in.dart';
@@ -36,7 +35,7 @@ class MainScreen extends StatelessWidget {
                         return RecruterBottomNavbar();
                       }
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                   });
             } else if (snapshot.hasError) {

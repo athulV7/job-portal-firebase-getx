@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:job_portal/core/common.dart';
+import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
 
 class CompanyTab extends StatelessWidget {
-  const CompanyTab({super.key});
+  const CompanyTab({super.key, required this.addJobModel});
+
+  final AddJobModel addJobModel;
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +16,9 @@ class CompanyTab extends StatelessWidget {
           SizedBox(
             height: height * 0.01,
           ),
-          const Text(
-            'Company Name',
-            style: TextStyle(
+          Text(
+            addJobModel.companyName,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -34,7 +37,7 @@ class CompanyTab extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: 'Location,Location',
+                  text: addJobModel.location,
                   style: TextStyle(
                     color: Colors.grey.shade400,
                   ),
@@ -42,16 +45,6 @@ class CompanyTab extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: height * 0.03,
-          ),
-          const SizedBox(
-            height: 100,
-            width: 100,
-            child: Material(
-              child: Icon(Icons.image),
-            ),
-          )
         ],
       ),
     );
