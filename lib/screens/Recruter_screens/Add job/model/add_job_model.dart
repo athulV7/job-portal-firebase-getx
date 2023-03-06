@@ -26,17 +26,18 @@ class AddJobModel {
   });
 
   factory AddJobModel.fromJson(Map<String, dynamic> json) => AddJobModel(
-      title: json['title'],
-      description: json['description'],
-      salary: json['salary'],
-      companyName: json['companyName'],
-      experience: json['experience'],
-      industry: json['industry'],
-      jobType: json['jobType'],
-      location: json['location'],
-      positions: json['positions'],
-      qualification: json['qualification'],
-      createdTime: json['createdTime']);
+        title: json['title'],
+        description: json['description'],
+        salary: json['salary'],
+        companyName: json['companyName'],
+        experience: json['experience'],
+        industry: json['industry'],
+        jobType: json['jobType'],
+        location: json['location'],
+        positions: json['positions'],
+        qualification: json['qualification'],
+        createdTime: json['createdTime'],
+      );
 
   Map<String, dynamic> toJson() {
     return {

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +20,7 @@ class FindJobsList extends StatelessWidget {
     return FutureBuilder(
         future: vacancieCollectionRef.get(),
         builder: (context, snapshot) {
+          //log(snapshot.data!.docs.first.id);
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -31,7 +35,9 @@ class FindJobsList extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                  jobDetailsBottomsheet(addJobModel);
+                  log(vacancyList[index].id);
+                  String currentJobId = vacancyList[index].id;
+                  jobDetailsBottomsheet(addJobModel, currentJobId);
                 },
                 child: Material(
                   shape: RoundedRectangleBorder(
@@ -52,7 +58,19 @@ class FindJobsList extends StatelessWidget {
                             Container(
                               height: width * 0.16,
                               width: width * 0.16,
-                              color: Colors.amber,
+                              //padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(9),
+                                color: Colors.amber,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(9),
+                                child: Image(
+                                  fit: BoxFit.cover,
+                                  image:
+                                      AssetImage('assets/images/14624324.jpg'),
+                                ),
+                              ),
                             ),
                             SizedBox(
                               width: width * 0.02,
@@ -155,7 +173,7 @@ class FindJobsList extends StatelessWidget {
   }
 
   //job details when clicking list tile
-  jobDetailsBottomsheet(AddJobModel addJobModel) {
+  jobDetailsBottomsheet(AddJobModel addJobModel, String currentJobId) {
     return Get.bottomSheet(
       isScrollControlled: true,
       SizedBox(
@@ -172,7 +190,9 @@ class FindJobsList extends StatelessWidget {
                 height: width * 0.15,
                 width: width * 0.15,
                 color: Colors.amber,
-                child: Image(image: AssetImage('')),
+                child: const Image(
+                  image: AssetImage('assets/images/14624324.jpg'),
+                ),
               ),
               Text(
                 addJobModel.title,
@@ -236,7 +256,14 @@ class FindJobsList extends StatelessWidget {
               SizedBox(
                 width: width * 0.8,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    String userID = FirebaseAuth.instance.currentUser!.uid;
+                    vacancieCollectionRef.doc(currentJobId).update(
+                      {
+                        'applied': FieldValue.arrayUnion([userID])
+                      },
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     shape: RoundedRectangleBorder(
@@ -249,10 +276,6 @@ class FindJobsList extends StatelessWidget {
                   ),
                 ),
               ),
-
-              //------------------------
-              //setJobImage(addJobModel)
-              //---------------------------
             ],
           ),
         ),
@@ -263,9 +286,4 @@ class FindJobsList extends StatelessWidget {
       ),
     );
   }
-
-  //:::::::::::::------------------------
-  // setJobImage(AddJobModel addJobModel) {
-  //   if(addJobModel.industry == 'Busienss')
-  // }
 }
