@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                 IconButton(
                   onPressed: () async {
                     await signInController.googleSignOut();
-                    Get.offAll(MainScreen());
+                    Get.offAll(const MainScreen());
                   },
                   icon: Icon(
                     Icons.sms,

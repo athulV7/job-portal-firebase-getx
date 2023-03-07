@@ -7,7 +7,7 @@ import 'package:job_portal/screens/User_screens/Find_jobs/view/widgets/find_jobs
 import 'package:lottie/lottie.dart';
 
 class FindJobs extends StatelessWidget {
-  FindJobs({super.key});
+  const FindJobs({super.key});
 
   @override
   Widget build(BuildContext context) {

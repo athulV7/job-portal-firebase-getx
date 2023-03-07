@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
-import 'package:job_portal/screens/Recruter_screens/home/view/home.dart';
 import 'package:job_portal/screens/Role_select_screen/controller/role_controller.dart';
-import 'package:job_portal/widgets/bottom_nav.dart';
+import 'package:job_portal/screens/profile_setting_screen/view/recriter_profile_screen.dart';
+import 'package:job_portal/screens/profile_setting_screen/view/seeker_profile_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
@@ -87,10 +87,10 @@ class RoleSelectionScreen extends StatelessWidget {
                           .doc(userUID);
                       if (roleController.selected == 1) {
                         docRef.update({'role': 'seeker'});
-                        Get.off(BottomNavbar());
+                        Get.off(SeekerProfileSettingScreen());
                       } else if (roleController.selected == 2) {
                         docRef.update({'role': 'recruiter'});
-                        Get.off(RecruterHomeScreen());
+                        Get.off(RecruiterProfileSettingScreen());
                       } else {
                         Get.snackbar(
                           'Select',
@@ -127,7 +127,7 @@ class JobRoleButtonWidget extends StatelessWidget {
 
   final IconData icon;
   final String text;
-  final elevation;
+  final double elevation;
   final bool visibility;
 
   final rolecontrol = Get.put(RoleController());

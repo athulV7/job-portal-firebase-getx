@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
-import 'package:job_portal/screens/Recruter_screens/All_jobs/view/widgets/jobAppliedDetails.dart';
+import 'package:job_portal/screens/Recruter_screens/All_jobs/view/widgets/job_applied_details.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
 import 'package:lottie/lottie.dart';
@@ -264,7 +264,10 @@ class VacancyJobsInHomeWidget extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             var currentJobId = vacancyList[index].id;
-            Get.to(JobAppliedDetails(currentJobId: currentJobId));
+            Get.to(JobAppliedDetails(
+              currentJobId: currentJobId,
+              addJobModel: addJobModel,
+            ));
           },
           child: Material(
             shape: RoundedRectangleBorder(

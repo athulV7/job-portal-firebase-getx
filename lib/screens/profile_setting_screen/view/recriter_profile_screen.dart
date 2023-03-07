@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/core/common.dart';
-import 'package:job_portal/screens/profile_setting_screen/model/profile_setting_model.dart';
+import 'package:job_portal/screens/Recruter_screens/widgets/recruter_bottom_nav.dart';
+import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 
-class ProfileSettingScreen extends StatelessWidget {
-  ProfileSettingScreen({super.key});
+class RecruiterProfileSettingScreen extends StatelessWidget {
+  RecruiterProfileSettingScreen({super.key});
 
-  final profileFormkey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final ageController = TextEditingController();
+  final recProfileFormkey = GlobalKey<FormState>();
+  final companyNameController = TextEditingController();
+  final establishedDateController = TextEditingController();
   final addressController = TextEditingController();
-  final occupationController = TextEditingController();
+  final countryController = TextEditingController();
+  final companyEmailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class ProfileSettingScreen extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(top: width * 0.12),
             child: Form(
-              key: profileFormkey,
+              key: recProfileFormkey,
               child: Column(
                 children: [
                   Text(
@@ -46,7 +49,7 @@ class ProfileSettingScreen extends StatelessWidget {
                         const CircleAvatar(
                           radius: 60,
                           backgroundImage: AssetImage(
-                            'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png',
+                            'assets/images/Screenshot 2023-03-06 113206.png',
                           ),
                           backgroundColor: Colors.green,
                         ),
@@ -80,7 +83,7 @@ class ProfileSettingScreen extends StatelessWidget {
                   SizedBox(
                     height: width * 0.13,
                     child: TextFormField(
-                      controller: nameController,
+                      controller: companyNameController,
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -88,7 +91,8 @@ class ProfileSettingScreen extends StatelessWidget {
                         }
                         return null;
                       },
-                      decoration: textfieldInputDecoration('Name', false),
+                      decoration:
+                          textfieldInputDecoration('Company Name', false),
                     ),
                   ),
                   SizedBox(
@@ -97,15 +101,34 @@ class ProfileSettingScreen extends StatelessWidget {
                   SizedBox(
                     height: width * 0.13,
                     child: TextFormField(
-                      controller: ageController,
-                      keyboardType: TextInputType.number,
+                      controller: companyEmailController,
+                      keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'This field is required';
                         }
                         return null;
                       },
-                      decoration: textfieldInputDecoration('Age', false),
+                      decoration:
+                          textfieldInputDecoration('Company Email', false),
+                    ),
+                  ),
+                  SizedBox(
+                    height: height * 0.02,
+                  ),
+                  SizedBox(
+                    height: width * 0.13,
+                    child: TextFormField(
+                      controller: establishedDateController,
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required';
+                        }
+                        return null;
+                      },
+                      decoration:
+                          textfieldInputDecoration('Established Date', false),
                     ),
                   ),
                   SizedBox(
@@ -129,7 +152,7 @@ class ProfileSettingScreen extends StatelessWidget {
                   SizedBox(
                     height: width * 0.13,
                     child: TextFormField(
-                      controller: occupationController,
+                      controller: countryController,
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -137,11 +160,12 @@ class ProfileSettingScreen extends StatelessWidget {
                         }
                         return null;
                       },
-                      decoration: textfieldInputDecoration('Occupation', false),
+                      decoration:
+                          textfieldInputDecoration('Country of origin', false),
                     ),
                   ),
                   SizedBox(
-                    height: height * 0.14,
+                    height: height * 0.1,
                   ),
                   SizedBox(
                     width: width * 0.6,
@@ -150,11 +174,11 @@ class ProfileSettingScreen extends StatelessWidget {
                         elevation: 3,
                       ),
                       onPressed: () {
-                        profileButtonClicked();
+                        recProfileButtonClicked();
                       },
                       child: const Text('Done'),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -164,20 +188,24 @@ class ProfileSettingScreen extends StatelessWidget {
     );
   }
 
-  void profileButtonClicked() async {
-    if (profileFormkey.currentState!.validate()) {
-      ProfileSettingModel profileSettingModel = ProfileSettingModel(
-        name: nameController.text.trim(),
-        age: int.parse(ageController.text),
-        address: addressController.text.trim(),
-        occupation: occupationController.text.trim(),
+  void recProfileButtonClicked() async {
+    if (recProfileFormkey.currentState!.validate()) {
+      RecruiterProfileModel recruiterProfileModel = RecruiterProfileModel(
+        companyName: companyNameController.text.trim(),
+        companyEmail: companyEmailController.text.trim(),
+        establishedDate: establishedDateController.text.trim(),
+        companyAddress: addressController.text.trim(),
+        country: countryController.text.trim(),
       );
 
-      String userUID = FirebaseAuth.instance.currentUser!.uid;
+      String recruiterUID = FirebaseAuth.instance.currentUser!.uid;
       await FirebaseFirestore.instance
           .collection('Users')
-          .doc(userUID)
-          .update({'profile': profileSettingModel.toJson()});
+          .doc(recruiterUID)
+          .update({'profile': recruiterProfileModel.toJson()});
+
+      //--------------------
+      Get.off(RecruterBottomNavbar());
     }
   }
 }

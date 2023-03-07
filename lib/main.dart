@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/screens/Main_screen/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:job_portal/screens/profile_setting_screen/view/profile_setting_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +23,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: GoogleFonts.montserrat().fontFamily,
       ),
-      home: ProfileSettingScreen(),
-      //const MainScreen(),
+      home: const MainScreen(),
+      //RecruiterProfileSettingScreen(),
     );
   }
 }

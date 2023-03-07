@@ -7,13 +7,15 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
+import 'package:job_portal/screens/User_screens/Find_jobs/controller/findjobs_controller.dart';
 import 'package:job_portal/screens/User_screens/Find_jobs/view/widgets/bottomsheet_tabbar.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
 
 class FindJobsList extends StatelessWidget {
-  const FindJobsList({super.key, required this.vacancieCollectionRef});
+  FindJobsList({super.key, required this.vacancieCollectionRef});
 
   final CollectionReference<Map<String, dynamic>> vacancieCollectionRef;
+  final findJobsController = Get.put(FindJobsController());
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class FindJobsList extends StatelessWidget {
         builder: (context, snapshot) {
           //log(snapshot.data!.docs.first.id);
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const SizedBox();
           }
           var vacancyList = snapshot.data!.docs;
           return ListView.separated(
@@ -65,7 +67,7 @@ class FindJobsList extends StatelessWidget {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(9),
-                                child: Image(
+                                child: const Image(
                                   fit: BoxFit.cover,
                                   image:
                                       AssetImage('assets/images/14624324.jpg'),
@@ -189,9 +191,15 @@ class FindJobsList extends StatelessWidget {
               Container(
                 height: width * 0.15,
                 width: width * 0.15,
-                color: Colors.amber,
-                child: const Image(
-                  image: AssetImage('assets/images/14624324.jpg'),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.amber,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: const Image(
+                    image: AssetImage('assets/images/14624324.jpg'),
+                  ),
                 ),
               ),
               Text(
@@ -253,29 +261,43 @@ class FindJobsList extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                width: width * 0.8,
-                child: ElevatedButton(
-                  onPressed: () {
-                    String userID = FirebaseAuth.instance.currentUser!.uid;
-                    vacancieCollectionRef.doc(currentJobId).update(
-                      {
-                        'applied': FieldValue.arrayUnion([userID])
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Apply Job',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
+              FutureBuilder(
+                  future: findJobsController.checkUserJobApplied(
+                      FirebaseAuth.instance.currentUser!.uid, currentJobId),
+                  builder: (context, snapshot) {
+                    return !(snapshot.connectionState == ConnectionState.done)
+                        ? const CircularProgressIndicator()
+                        : SizedBox(
+                            width: width * 0.8,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                String userID =
+                                    FirebaseAuth.instance.currentUser!.uid;
+                                vacancieCollectionRef.doc(currentJobId).update(
+                                  {
+                                    'applied': FieldValue.arrayUnion([userID])
+                                  },
+                                );
+                                findJobsController.applyButtonClicked(
+                                    userID, currentJobId);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: GetBuilder<FindJobsController>(
+                                builder: (controller) => Text(
+                                  findJobsController.applyButton == 'notApplied'
+                                      ? 'Apply Job'
+                                      : 'Applied',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          );
+                  }),
             ],
           ),
         ),
