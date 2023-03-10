@@ -16,6 +16,7 @@ const subHeadingNormal = TextStyle(
   fontSize: 15,
   fontWeight: FontWeight.w600,
 );
+
 //common textformfield input decoration
 InputDecoration textfieldInputDecoration(String label, bool alignLabel) {
   return InputDecoration(

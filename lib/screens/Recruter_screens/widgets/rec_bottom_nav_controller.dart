@@ -9,6 +9,6 @@ class RecruterBottomNavbarController extends GetxController {
   final screens = [
     RecruterHomeScreen(),
     const AllJobsScreen(),
-    const RecProfileScreen(),
+    RecProfileScreen(),
   ];
 }

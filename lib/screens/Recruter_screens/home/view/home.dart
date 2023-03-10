@@ -7,10 +7,9 @@ import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
 import 'package:job_portal/screens/Recruter_screens/All_jobs/view/widgets/job_applied_details.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
+import 'package:job_portal/screens/chat_front_screen/view/chat_front_screen.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
 import 'package:lottie/lottie.dart';
-
-import '../../../Main_screen/main_screen.dart';
 
 class RecruterHomeScreen extends StatelessWidget {
   RecruterHomeScreen({super.key});
@@ -52,12 +51,11 @@ class RecruterHomeScreen extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () async {
-                      await signInController.googleSignOut();
-                      Get.offAll(const MainScreen());
+                    onPressed: () {
+                      Get.to(const ChatFrontScreen());
                     },
                     icon: Icon(
-                      Icons.exit_to_app,
+                      Icons.sms,
                       color: Colors.grey.shade800,
                     ),
                   ),
@@ -164,6 +162,8 @@ class RecruterHomeScreen extends StatelessWidget {
                                   children: [
                                     const CircleAvatar(
                                       radius: 24,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
                                     ),
                                     SizedBox(
                                       width: width * 0.04,
@@ -288,7 +288,11 @@ class VacancyJobsInHomeWidget extends StatelessWidget {
                       Container(
                         height: width * 0.16,
                         width: width * 0.16,
-                        color: Colors.amber,
+                        child: const Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                              'assets/images/Screenshot 2023-03-06 113206.png'),
+                        ),
                       ),
                       SizedBox(
                         width: width * 0.02,

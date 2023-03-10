@@ -69,8 +69,8 @@ class FindJobsList extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(9),
                                 child: const Image(
                                   fit: BoxFit.cover,
-                                  image:
-                                      AssetImage('assets/images/14624324.jpg'),
+                                  image: AssetImage(
+                                      'assets/images/Screenshot 2023-03-06 113206.png'),
                                 ),
                               ),
                             ),

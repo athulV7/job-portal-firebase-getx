@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Main_screen/main_screen.dart';
+import 'package:job_portal/screens/chat_front_screen/view/chat_front_screen.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -45,9 +46,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () async {
-                    await signInController.googleSignOut();
-                    Get.offAll(const MainScreen());
+                  onPressed: () {
+                    Get.to(const ChatFrontScreen());
                   },
                   icon: Icon(
                     Icons.sms,

@@ -11,6 +11,6 @@ class BottomNavbarController extends GetxController {
     HomeScreen(),
     const FindJobs(),
     const LikedJobs(),
-    const ProfileScreen(),
+    ProfileScreen(),
   ];
 }
