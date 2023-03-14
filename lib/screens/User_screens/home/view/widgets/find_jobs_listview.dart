@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
-import 'package:job_portal/screens/User_screens/Find_jobs/controller/findjobs_controller.dart';
-import 'package:job_portal/screens/User_screens/Find_jobs/view/widgets/bottomsheet_tabbar.dart';
+import 'package:job_portal/screens/User_screens/home/controller/findjobs_controller.dart';
+import 'package:job_portal/screens/User_screens/home/view/widgets/bottomsheet_tabbar.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
 
 class FindJobsList extends StatelessWidget {
@@ -39,7 +39,8 @@ class FindJobsList extends StatelessWidget {
                 onTap: () {
                   log(vacancyList[index].id);
                   String currentJobId = vacancyList[index].id;
-                  jobDetailsBottomsheet(addJobModel, currentJobId);
+                  jobDetailsBottomsheet(
+                      addJobModel, currentJobId, vacancieCollectionRef);
                 },
                 child: Material(
                   shape: RoundedRectangleBorder(
@@ -133,7 +134,11 @@ class FindJobsList extends StatelessWidget {
                             ),
                             const Spacer(),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                String currentJobId = vacancyList[index].id;
+                                favoriteButtonClicked(
+                                    currentJobId, addJobModel);
+                              },
                               icon: const Icon(
                                 Icons.favorite_outline,
                                 size: 22,
@@ -174,137 +179,190 @@ class FindJobsList extends StatelessWidget {
         });
   }
 
+  Future<void> favoriteButtonClicked(
+      String currentJobID, AddJobModel addJobModel) async {
+    String currentUserID = FirebaseAuth.instance.currentUser!.uid;
+
+    var appliedJobsRef = await FirebaseFirestore.instance
+        .collection('SavedJobs')
+        .doc(currentUserID)
+        .get();
+    if (appliedJobsRef.exists) {
+      FirebaseFirestore.instance
+          .collection('SavedJobs')
+          .doc(currentUserID)
+          .update({
+        'appliedJobs': FieldValue.arrayUnion([
+          {currentJobID: addJobModel.toJson()}
+        ])
+      });
+    } else {
+      FirebaseFirestore.instance
+          .collection('SavedJobs')
+          .doc(currentUserID)
+          .set({
+        'appliedJobs': FieldValue.arrayUnion([
+          {currentJobID: addJobModel.toJson()}
+        ])
+      });
+    }
+  }
+
   //job details when clicking list tile
-  jobDetailsBottomsheet(AddJobModel addJobModel, String currentJobId) {
+  jobDetailsBottomsheet(AddJobModel addJobModel, String currentJobId,
+      CollectionReference<Map<String, dynamic>> vacancieCollectionRef) {
     return Get.bottomSheet(
       isScrollControlled: true,
-      SizedBox(
-        height: height * 0.7,
-        width: double.infinity,
-        child: Padding(
-          padding: EdgeInsets.all(width * 0.03),
-          child: Column(
-            children: [
-              SizedBox(
-                height: height * 0.01,
-              ),
-              Container(
-                height: width * 0.15,
-                width: width * 0.15,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.amber,
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: const Image(
-                    image: AssetImage('assets/images/14624324.jpg'),
-                  ),
-                ),
-              ),
-              Text(
-                addJobModel.title,
-                style: GoogleFonts.robotoSlab(
-                  textStyle: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              Text(
-                addJobModel.companyName,
-                style: const TextStyle(
-                  //fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              Text(
-                addJobModel.industry.toString(),
-                style: TextStyle(
-                  //fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  backgroundColor: Colors.cyan.withOpacity(0.05),
-                ),
-              ),
-
-              ChoiceChip(
-                avatar: const Icon(
-                  Icons.work_history_outlined,
-                  size: 18,
-                ),
-                label: Text(addJobModel.jobType.toString()),
-                selected: true,
-                backgroundColor: Colors.transparent,
-                selectedColor: Colors.transparent,
-                elevation: 0,
-              ),
-              SizedBox(
-                height: height * 0.01,
-              ),
-
-              //-----------------
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(width * 0.03),
-                  decoration: BoxDecoration(
-                    color: Colors.cyan.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: BottomSheetTabBar(
-                    addJobModel: addJobModel,
-                  ),
-                ),
-              ),
-              FutureBuilder(
-                  future: findJobsController.checkUserJobApplied(
-                      FirebaseAuth.instance.currentUser!.uid, currentJobId),
-                  builder: (context, snapshot) {
-                    return !(snapshot.connectionState == ConnectionState.done)
-                        ? const CircularProgressIndicator()
-                        : SizedBox(
-                            width: width * 0.8,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                String userID =
-                                    FirebaseAuth.instance.currentUser!.uid;
-                                vacancieCollectionRef.doc(currentJobId).update(
-                                  {
-                                    'applied': FieldValue.arrayUnion([userID])
-                                  },
-                                );
-                                findJobsController.applyButtonClicked(
-                                    userID, currentJobId);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: GetBuilder<FindJobsController>(
-                                builder: (controller) => Text(
-                                  findJobsController.applyButton == 'notApplied'
-                                      ? 'Apply Job'
-                                      : 'Applied',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          );
-                  }),
-            ],
-          ),
-        ),
+      JobDetailsBottomSheetwidget(
+        addJobModel: addJobModel,
+        currentJobId: currentJobId,
+        vacancieCollectionRef: vacancieCollectionRef,
       ),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+      ),
+    );
+  }
+}
+
+class JobDetailsBottomSheetwidget extends StatelessWidget {
+  JobDetailsBottomSheetwidget(
+      {super.key,
+      required this.addJobModel,
+      required this.currentJobId,
+      required this.vacancieCollectionRef});
+
+  final AddJobModel addJobModel;
+  final String currentJobId;
+  final findJobsController = Get.put(FindJobsController());
+  final CollectionReference<Map<String, dynamic>> vacancieCollectionRef;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height * 0.7,
+      width: double.infinity,
+      child: Padding(
+        padding: EdgeInsets.all(width * 0.03),
+        child: Column(
+          children: [
+            SizedBox(
+              height: height * 0.01,
+            ),
+            Container(
+              height: width * 0.15,
+              width: width * 0.15,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.amber,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: const Image(
+                  image: AssetImage('assets/images/14624324.jpg'),
+                ),
+              ),
+            ),
+            Text(
+              addJobModel.title,
+              style: GoogleFonts.robotoSlab(
+                textStyle: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: height * 0.01,
+            ),
+            Text(
+              addJobModel.companyName,
+              style: const TextStyle(
+                //fontSize: 22,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: height * 0.01,
+            ),
+            Text(
+              addJobModel.industry.toString(),
+              style: TextStyle(
+                //fontSize: 22,
+                fontWeight: FontWeight.w500,
+                backgroundColor: Colors.cyan.withOpacity(0.05),
+              ),
+            ),
+
+            ChoiceChip(
+              avatar: const Icon(
+                Icons.work_history_outlined,
+                size: 18,
+              ),
+              label: Text(addJobModel.jobType.toString()),
+              selected: true,
+              backgroundColor: Colors.transparent,
+              selectedColor: Colors.transparent,
+              elevation: 0,
+            ),
+            SizedBox(
+              height: height * 0.01,
+            ),
+
+            //-----------------
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(width * 0.03),
+                decoration: BoxDecoration(
+                  color: Colors.cyan.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: BottomSheetTabBar(
+                  addJobModel: addJobModel,
+                ),
+              ),
+            ),
+            FutureBuilder(
+              future: findJobsController.checkUserJobApplied(
+                  FirebaseAuth.instance.currentUser!.uid, currentJobId),
+              builder: (context, snapshot) {
+                return !(snapshot.connectionState == ConnectionState.done)
+                    ? const CircularProgressIndicator()
+                    : SizedBox(
+                        width: width * 0.8,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            String userID =
+                                FirebaseAuth.instance.currentUser!.uid;
+                            vacancieCollectionRef.doc(currentJobId).update(
+                              {
+                                'applied': FieldValue.arrayUnion([userID])
+                              },
+                            );
+                            findJobsController.applyButtonClicked(
+                                userID, currentJobId);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: GetBuilder<FindJobsController>(
+                            builder: (controller) => Text(
+                              findJobsController.applyButton == 'notApplied'
+                                  ? 'Apply Job'
+                                  : 'Applied',
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

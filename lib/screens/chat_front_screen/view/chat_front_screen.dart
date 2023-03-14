@@ -29,12 +29,14 @@ class ChatFrontScreen extends StatelessWidget {
           backgroundColor: Colors.cyan.withOpacity(0.8),
           title: Padding(
             padding: EdgeInsets.only(top: width * 0.06),
-            child: Text('Chat',
-                style: GoogleFonts.montserrat(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 30,
-                  color: Colors.white,
-                )),
+            child: Text(
+              'Chat',
+              style: GoogleFonts.montserrat(
+                fontWeight: FontWeight.w600,
+                fontSize: 30,
+                color: Colors.white,
+              ),
+            ),
           ),
           centerTitle: true,
           leading: Padding(

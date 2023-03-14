@@ -1,10 +1,14 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
-import 'package:job_portal/screens/Main_screen/main_screen.dart';
+import 'package:job_portal/screens/User_screens/home/view/widgets/find_jobs_listview.dart';
 import 'package:job_portal/screens/chat_front_screen/view/chat_front_screen.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
+import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -14,9 +18,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.all(0),
-        shrinkWrap: true,
+      body: Column(
         children: [
           Padding(
             padding: EdgeInsets.only(top: height * 0.04, left: width * 0.04),
@@ -60,97 +62,68 @@ class HomeScreen extends StatelessWidget {
           const Divider(
             thickness: 9,
           ),
-          ListView.separated(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(0),
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  top: width * 0.03,
-                  left: width * 0.03,
-                  right: width * 0.03,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(width * 0.03),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Popular Jobs', style: subHeadlineStyle),
+                    SizedBox(
+                      height: height * 0.02,
+                    ),
+                    StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('recruiter')
+                          .snapshots(),
+                      // .doc(recruiterUID)
+                      // .collection('vacancies')
+                      // .orderBy('createdTime', descending: true)
+
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        var recruitersList = snapshot.data!.docs;
+                        if (recruitersList.isEmpty) {
+                          log(recruitersList.length.toString());
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                LottieBuilder.asset(
+                                  'assets/lottie/103199-hiring-pt-2.json',
+                                ),
+                              ],
+                            ),
+                          );
+                        } else if (recruitersList.isNotEmpty) {
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(0),
+                              itemCount: recruitersList.length,
+                              itemBuilder: (context, index) {
+                                String recruiterUID = recruitersList[index].id;
+                                var vacanciesCollectionRef = FirebaseFirestore
+                                    .instance
+                                    .collection('recruiter')
+                                    .doc(recruiterUID)
+                                    .collection('vacancies');
+                                return FindJobsList(
+                                  vacancieCollectionRef: vacanciesCollectionRef,
+                                );
+                              });
+                        } else {
+                          return const SizedBox();
+                        }
+                        // vacancies listview
+                      },
+                    ),
+                  ],
                 ),
-                child: Material(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            child: Icon(
-                              CupertinoIcons.person_alt_circle,
-                              size: 40,
-                            ),
-                          ),
-                          SizedBox(
-                            width: width * 0.03,
-                          ),
-                          const Text(
-                            'Name',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      const Text(
-                        '"But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness.',
-                      ),
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      Container(
-                        width: double.infinity,
-                        color: Colors.green,
-                        child: Image.network(
-                          'https://media.istockphoto.com/id/1451309715/photo/young-asian-woman-software-developers-mentor-leader-manager-talking-to-executive-team.jpg?b=1&s=170667a&w=0&k=20&c=rukaDl4U706Yop35WNn8L3ySxz5tjSvTsuc0COZA0vQ=',
-                        ),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextbuttonWidget(
-                            icon: Icon(
-                              Icons.thumb_up_alt_outlined,
-                              size: 18,
-                              color: Colors.grey.shade800,
-                            ),
-                            label: 'Like',
-                          ),
-                          TextbuttonWidget(
-                            icon: Icon(
-                              CupertinoIcons.text_bubble,
-                              size: 18,
-                              color: Colors.grey.shade800,
-                            ),
-                            label: 'Comment',
-                          ),
-                          TextbuttonWidget(
-                            icon: Icon(
-                              Icons.send,
-                              size: 18,
-                              color: Colors.grey.shade800,
-                            ),
-                            label: 'share',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-            itemCount: 5,
-            separatorBuilder: (context, index) => const Divider(
-              thickness: 7,
+              ),
             ),
           ),
         ],

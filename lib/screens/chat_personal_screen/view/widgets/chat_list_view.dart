@@ -63,14 +63,12 @@ class ChatListView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             color: chatModel.fromUID == recipentUID
-                                ? Colors.cyan.shade400
+                                ? Colors.cyan.shade600
                                 : Colors.white,
                           ),
                         ),
                         // Text(
                         //   formatedTime,
-                        //   textAlign: TextAlign.right,
-
                         // ),
                       ],
                     ),

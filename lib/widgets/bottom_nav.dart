@@ -25,10 +25,6 @@ class BottomNavbar extends GetView<BottomNavbarController> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.card_travel),
-              label: 'Jobs',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.favorite_border_outlined),
               label: 'Liked',
             ),

@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/chat_personal_screen/model/personal_chat_model.dart';
-import 'package:job_portal/screens/chat_personal_screen/view/recruiter_chat_personal_screen.dart';
 import 'package:job_portal/screens/chat_personal_screen/view/widgets/chat_list_view.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 

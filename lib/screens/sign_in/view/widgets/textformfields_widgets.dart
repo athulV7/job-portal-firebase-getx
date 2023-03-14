@@ -7,15 +7,17 @@ class SignInTextfieldsWidget extends StatelessWidget {
   const SignInTextfieldsWidget({
     Key? key,
     required this.signInController,
+    required this.formKey,
   }) : super(key: key);
 
   final SignInController signInController;
+  final GlobalKey<FormState> formKey;
 
   @override
   Widget build(BuildContext context) {
     final height = Get.size.height;
     return Form(
-      key: signInController.formKey,
+      key: formKey,
       child: Wrap(
         children: [
           TextFormField(

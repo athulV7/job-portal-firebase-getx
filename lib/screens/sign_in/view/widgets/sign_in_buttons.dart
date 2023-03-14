@@ -11,9 +11,11 @@ class SignInButtons extends StatelessWidget {
     required this.signInController,
     required this.height,
     required this.width,
+    required this.formKey,
   }) : super(key: key);
 
   final SignInController signInController;
+  final GlobalKey<FormState> formKey;
   final double height;
   final double width;
 
@@ -107,7 +109,7 @@ class SignInButtons extends StatelessWidget {
   }
 
   void onSignInButtonClicked() async {
-    if (signInController.formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate()) {
       log("sign in Validation succesful");
       var collectionRefrnce =
           await FirebaseFirestore.instance.collection("Users").get();

@@ -12,6 +12,7 @@ class SignIn extends GetView<SignInController> {
   SignIn({super.key});
 
   final signInController = Get.put(SignInController());
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,8 @@ class SignIn extends GetView<SignInController> {
                   ),
 
                   //textfields for login/password
-                  SignInTextfieldsWidget(signInController: signInController),
+                  SignInTextfieldsWidget(
+                      signInController: signInController, formKey: formKey),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -64,6 +66,7 @@ class SignIn extends GetView<SignInController> {
 
                   //sign in buttons
                   SignInButtons(
+                    formKey: formKey,
                     signInController: signInController,
                     height: height,
                     width: width,

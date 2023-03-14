@@ -9,7 +9,6 @@ import 'package:job_portal/screens/Main_screen/main_screen.dart';
 class SignInController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
 
   final googleSignIn = GoogleSignIn();
   GoogleSignInAccount? _user;
