@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,56 +9,72 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:job_portal/core/common.dart';
-import 'package:job_portal/screens/Recruter_screens/widgets/recruter_bottom_nav.dart';
-import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
+import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
 
-class RecruiterProfileSettingScreen extends StatelessWidget {
-  RecruiterProfileSettingScreen({super.key});
+class ProfileEditScreen extends StatelessWidget {
+  ProfileEditScreen({super.key, required this.profileSettingModel});
 
-  final recProfileFormkey = GlobalKey<FormState>();
-  final companyNameController = TextEditingController();
-  final establishedDateController = TextEditingController();
+  final ProfileSettingModel profileSettingModel;
+  final profileEditFormkey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final ageController = TextEditingController();
   final addressController = TextEditingController();
-  final countryController = TextEditingController();
-  final companyEmailController = TextEditingController();
+  final occupationController = TextEditingController();
   final userDpUrl = ''.obs;
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      nameController.text = profileSettingModel.name;
+      ageController.text = profileSettingModel.age.toString();
+      addressController.text = profileSettingModel.address;
+      occupationController.text = profileSettingModel.occupation;
+      if (profileSettingModel.profilePic != null) {
+        userDpUrl.value = profileSettingModel.profilePic!;
+      }
+    });
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.cyan,
+          ),
+        ),
+        centerTitle: true,
+        title: Text(
+          'Profile',
+          style: GoogleFonts.openSans(
+            textStyle: const TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.all(width * 0.03),
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(top: width * 0.12),
+            padding: EdgeInsets.only(top: width * 0.07),
             child: Form(
-              key: recProfileFormkey,
+              key: profileEditFormkey,
               child: Column(
                 children: [
-                  Text(
-                    'Profile',
-                    style: GoogleFonts.openSans(
-                      textStyle: const TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.025,
-                  ),
                   SizedBox(
                     height: width * 0.3,
                     width: width * 0.3,
                     child: Stack(
                       children: [
                         Obx(() {
+                          log('changing');
+
                           if (userDpUrl.value == '') {
                             return const CircleAvatar(
                               radius: 60,
                               backgroundImage: AssetImage(
-                                'assets/images/Screenshot 2023-03-06 113206.png',
-                              ),
+                                  'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
                               backgroundColor: Colors.green,
                             );
                           }
@@ -107,7 +124,7 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
                   SizedBox(
                     height: width * 0.13,
                     child: TextFormField(
-                      controller: companyNameController,
+                      controller: nameController,
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -115,8 +132,7 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
                         }
                         return null;
                       },
-                      decoration:
-                          textfieldInputDecoration('Company Name', false),
+                      decoration: textfieldInputDecoration('Name', false),
                     ),
                   ),
                   SizedBox(
@@ -125,34 +141,15 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
                   SizedBox(
                     height: width * 0.13,
                     child: TextFormField(
-                      controller: companyEmailController,
-                      keyboardType: TextInputType.emailAddress,
+                      controller: ageController,
+                      keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'This field is required';
                         }
                         return null;
                       },
-                      decoration:
-                          textfieldInputDecoration('Company Email', false),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  SizedBox(
-                    height: width * 0.13,
-                    child: TextFormField(
-                      controller: establishedDateController,
-                      keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required';
-                        }
-                        return null;
-                      },
-                      decoration:
-                          textfieldInputDecoration('Established Date', false),
+                      decoration: textfieldInputDecoration('Age', false),
                     ),
                   ),
                   SizedBox(
@@ -176,7 +173,7 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
                   SizedBox(
                     height: width * 0.13,
                     child: TextFormField(
-                      controller: countryController,
+                      controller: occupationController,
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -184,12 +181,11 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
                         }
                         return null;
                       },
-                      decoration:
-                          textfieldInputDecoration('Country of origin', false),
+                      decoration: textfieldInputDecoration('Occupation', false),
                     ),
                   ),
                   SizedBox(
-                    height: height * 0.1,
+                    height: height * 0.14,
                   ),
                   SizedBox(
                     width: width * 0.6,
@@ -198,7 +194,7 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
                         elevation: 3,
                       ),
                       onPressed: () {
-                        recProfileButtonClicked();
+                        profileButtonClicked();
                       },
                       child: const Text('Done'),
                     ),
@@ -212,28 +208,6 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
     );
   }
 
-  void recProfileButtonClicked() async {
-    if (recProfileFormkey.currentState!.validate()) {
-      RecruiterProfileModel recruiterProfileModel = RecruiterProfileModel(
-        profilePic: userDpUrl.value,
-        companyName: companyNameController.text.trim(),
-        companyEmail: companyEmailController.text.trim(),
-        establishedDate: establishedDateController.text.trim(),
-        companyAddress: addressController.text.trim(),
-        country: countryController.text.trim(),
-      );
-
-      String recruiterUID = FirebaseAuth.instance.currentUser!.uid;
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(recruiterUID)
-          .update({'profile': recruiterProfileModel.toJson()});
-
-      //--------------------
-      Get.off(RecruterBottomNavbar());
-    }
-  }
-
   Future<String> userUploadDp(File profilePic) async {
     String currentUserId = FirebaseAuth.instance.currentUser!.uid;
     var storageRef =
@@ -242,5 +216,27 @@ class RecruiterProfileSettingScreen extends StatelessWidget {
     await storageRef.putFile(profilePic);
     String userDpUrl = await storageRef.getDownloadURL();
     return userDpUrl;
+  }
+
+  void profileButtonClicked() async {
+    if (profileEditFormkey.currentState!.validate()) {
+      ProfileSettingModel profileSettingModel = ProfileSettingModel(
+        profilePic: userDpUrl.value,
+        name: nameController.text.trim(),
+        age: int.parse(ageController.text),
+        address: addressController.text.trim(),
+        occupation: occupationController.text.trim(),
+      );
+
+      String userUID = FirebaseAuth.instance.currentUser!.uid;
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUID)
+          .update({'profile': profileSettingModel.toJson()});
+
+      //------------------------------
+
+      Get.back();
+    }
   }
 }

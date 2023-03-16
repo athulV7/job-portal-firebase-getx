@@ -17,6 +17,13 @@ const subHeadingNormal = TextStyle(
   fontWeight: FontWeight.w600,
 );
 
+const thirdTextStyle = TextStyle(
+  color: Colors.cyan,
+  fontSize: 15,
+  fontWeight: FontWeight.bold,
+  letterSpacing: 1,
+);
+
 //common textformfield input decoration
 InputDecoration textfieldInputDecoration(String label, bool alignLabel) {
   return InputDecoration(

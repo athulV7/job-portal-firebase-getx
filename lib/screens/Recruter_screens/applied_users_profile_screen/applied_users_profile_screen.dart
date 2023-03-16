@@ -39,7 +39,7 @@ class AppliedUsersProfileScreen extends StatelessWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  height: height * 0.2,
+                  height: height * 0.21,
                   margin: EdgeInsets.only(top: width * 0.19),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -55,11 +55,18 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        height: width * 0.07,
+                        height: width * 0.025,
+                      ),
+                      Text(
+                        profileSettingModel.occupation,
+                      ),
+                      SizedBox(
+                        height: width * 0.03,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: width * 0.03),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             MaterialButton(
                               onPressed: () {
@@ -69,7 +76,7 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                                 ));
                               },
                               height: width * 0.1,
-                              minWidth: width * 0.6,
+                              minWidth: width * 0.66,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),
                               ),
@@ -82,48 +89,30 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                                     color: Colors.grey.shade700,
                                   ),
                                   SizedBox(
-                                    width: width * 0.02,
+                                    width: width * 0.03,
                                   ),
                                   const Text('Message'),
                                 ],
                               ),
                             ),
-                            SizedBox(
-                              width: width * 0.02,
-                            ),
-                            Expanded(
-                              child: MaterialButton(
-                                onPressed: () {},
-                                height: width * 0.1,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                color: Colors.white,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text('Edit '),
-                                    Icon(
-                                      Icons.edit_note,
-                                      size: 20,
-                                      color: Colors.grey.shade700,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )
                           ],
                         ),
                       )
                     ],
                   ),
                 ),
-                const Center(
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage(
-                        'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
-                  ),
+                Center(
+                  child: profileSettingModel.profilePic == null
+                      ? const CircleAvatar(
+                          radius: 60,
+                          backgroundImage: AssetImage(
+                              'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
+                        )
+                      : CircleAvatar(
+                          radius: 60,
+                          backgroundImage:
+                              NetworkImage(profileSettingModel.profilePic!),
+                        ),
                 ),
               ],
             ),
@@ -145,6 +134,25 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: Colors.white,
+                      ),
+                      child: MaterialButton(
+                        onPressed: () {},
+                        height: height * 0.08,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('CV  '),
+                            Icon(
+                              Icons.file_copy_outlined,
+                              size: 16,
+                              color: Colors.grey.shade700,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(

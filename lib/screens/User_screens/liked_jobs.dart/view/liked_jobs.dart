@@ -5,7 +5,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
-import 'package:job_portal/screens/User_screens/home/view/widgets/find_jobs_listview.dart';
+import 'package:job_portal/screens/User_screens/home/view/widgets/job_details_bottomsheet.dart';
+import 'package:lottie/lottie.dart';
 
 class LikedJobs extends StatelessWidget {
   const LikedJobs({super.key});
@@ -36,7 +37,23 @@ class LikedJobs extends StatelessWidget {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
-            var appliedJobsList = snapshot.data!.data()!['appliedJobs'];
+            if (!snapshot.data!.exists) {
+              return Column(
+                children: [
+                  LottieBuilder.asset('assets/lottie/129959-empty.json'),
+                  const Text("No saved Jobs"),
+                ],
+              );
+            }
+            var appliedJobsList = snapshot.data!.data()!['savedJobs'];
+            if (appliedJobsList.isEmpty) {
+              return Column(
+                children: [
+                  LottieBuilder.asset('assets/lottie/129959-empty.json'),
+                  const Text("No saved Jobs"),
+                ],
+              );
+            }
 
             return Padding(
               padding: EdgeInsets.all(width * 0.035),
@@ -48,9 +65,15 @@ class LikedJobs extends StatelessWidget {
                   String jobID = appliedJobsList[index].keys.first;
                   AddJobModel addJobModel =
                       AddJobModel.fromJson(appliedJobsList[index][jobID]);
+
+                  // var vacancieCollectionRef = FirebaseFirestore.instance
+                  //     .collection('recruiter')
+                  //     .doc(addJobModel.recruiterID)
+                  //     .collection('vacancies');
                   return GestureDetector(
                     onTap: () {
                       //________________________________
+                      jobDetailBottomsheet(addJobModel, jobID);
                     },
                     child: Material(
                       shape: RoundedRectangleBorder(
@@ -88,63 +111,79 @@ class LikedJobs extends StatelessWidget {
                                 SizedBox(
                                   width: width * 0.02,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          WidgetSpan(
-                                            child: Icon(
-                                              Icons.location_city,
-                                              size: 18,
-                                              color: Colors.blue.shade300,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            WidgetSpan(
+                                              child: Icon(
+                                                Icons.location_city,
+                                                size: 18,
+                                                color: Colors.blue.shade300,
+                                              ),
                                             ),
-                                          ),
-                                          TextSpan(
-                                            text: addJobModel.companyName,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey.shade400,
+                                            TextSpan(
+                                              text: addJobModel.companyName,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey.shade400,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      addJobModel.title,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
+                                      Text(
+                                        addJobModel.title,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: height * 0.01,
-                                    ),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          WidgetSpan(
-                                            child: Icon(
-                                              Icons.location_on_outlined,
-                                              size: 19,
-                                              color: Colors.green.shade200,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: addJobModel.location,
-                                            style: TextStyle(
-                                              color: Colors.grey.shade400,
-                                            ),
-                                          ),
-                                        ],
+                                      SizedBox(
+                                        height: height * 0.01,
                                       ),
-                                    ),
-                                  ],
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            WidgetSpan(
+                                              child: Icon(
+                                                Icons.location_on_outlined,
+                                                size: 19,
+                                                color: Colors.green.shade200,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: addJobModel.location,
+                                              style: TextStyle(
+                                                color: Colors.grey.shade400,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const Spacer(),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    //remove from saved jobs
+                                    String currentJobID = addJobModel.jobId;
+                                    String currentUID =
+                                        FirebaseAuth.instance.currentUser!.uid;
+
+                                    FirebaseFirestore.instance
+                                        .collection('SavedJobs')
+                                        .doc(currentUID)
+                                        .update({
+                                      'savedJobs': FieldValue.arrayRemove([
+                                        {currentJobID: addJobModel.toJson()}
+                                      ])
+                                    });
+                                  },
                                   icon: const Icon(
                                     Icons.favorite,
                                     size: 22,
@@ -187,21 +226,19 @@ class LikedJobs extends StatelessWidget {
     );
   }
 
-  // jobDetailBottomsheet(AddJobModel addJobModel, String currentJobId,
-  //     CollectionReference<Map<String, dynamic>> vacancieCollectionRef) {
-  //   return Get.bottomSheet(
-  //     isScrollControlled: true,
-  //     JobDetailsBottomSheetwidget(
-  //       addJobModel: addJobModel,
-  //       currentJobId: currentJobId,
-  //       vacancieCollectionRef: vacancieCollectionRef,
-  //     ),
-  //     backgroundColor: Colors.white,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.circular(12),
-  //     ),
-  //   );
-  // }
+  jobDetailBottomsheet(AddJobModel addJobModel, String currentJobId) {
+    return Get.bottomSheet(
+      isScrollControlled: true,
+      JobDetailsBottomSheetwidget(
+        addJobModel: addJobModel,
+        currentJobId: currentJobId,
+      ),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
+  }
 }
 
 class CustomMaterialButton extends StatelessWidget {

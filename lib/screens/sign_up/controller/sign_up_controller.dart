@@ -21,6 +21,7 @@ class SignUpController extends GetxController {
       );
     } catch (signUpError) {
       log("signup exception");
+      log(signUpError.toString());
       if (signUpError is PlatformException) {
         if (signUpError.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
           /// Email has alread been registered.
@@ -28,7 +29,7 @@ class SignUpController extends GetxController {
         }
       }
     }
-    Get.offAll(const MainScreen());
+    Get.offAll(() => const MainScreen());
   }
 
   //obscure text visibiliby

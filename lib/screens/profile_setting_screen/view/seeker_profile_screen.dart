@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Role_select_screen/controller/role_controller.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
@@ -18,8 +22,11 @@ class SeekerProfileSettingScreen extends StatelessWidget {
   final occupationController = TextEditingController();
   final roleController = Get.put(RoleController());
 
+  final userDpUrl = ''.obs;
+
   @override
   Widget build(BuildContext context) {
+    String currentUserID = FirebaseAuth.instance.currentUser!.uid;
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(width * 0.03),
@@ -48,13 +55,21 @@ class SeekerProfileSettingScreen extends StatelessWidget {
                       width: width * 0.3,
                       child: Stack(
                         children: [
-                          const CircleAvatar(
-                            radius: 60,
-                            backgroundImage: AssetImage(
-                              'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png',
-                            ),
-                            backgroundColor: Colors.green,
-                          ),
+                          Obx(() {
+                            if (userDpUrl.value == '') {
+                              return const CircleAvatar(
+                                radius: 60,
+                                backgroundImage: AssetImage(
+                                    'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
+                                backgroundColor: Colors.green,
+                              );
+                            }
+                            return CircleAvatar(
+                              radius: 60,
+                              backgroundImage: NetworkImage(userDpUrl.value),
+                              backgroundColor: Colors.green,
+                            );
+                          }),
                           Align(
                             alignment: Alignment.bottomRight,
                             child: Padding(
@@ -66,7 +81,17 @@ class SeekerProfileSettingScreen extends StatelessWidget {
                                 radius: 17,
                                 backgroundColor: Colors.green,
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    ImagePicker imagePicker = ImagePicker();
+                                    XFile? image = await imagePicker.pickImage(
+                                        source: ImageSource.gallery);
+
+                                    if (image != null) {
+                                      File profilePic = File(image.path);
+                                      userDpUrl.value =
+                                          await userUploadDp(profilePic);
+                                    }
+                                  },
                                   icon: const Icon(
                                     Icons.add_a_photo_outlined,
                                     color: Colors.white,
@@ -174,6 +199,7 @@ class SeekerProfileSettingScreen extends StatelessWidget {
   void profileButtonClicked() async {
     if (profileFormkey.currentState!.validate()) {
       ProfileSettingModel profileSettingModel = ProfileSettingModel(
+        profilePic: userDpUrl.value,
         name: nameController.text.trim(),
         age: int.parse(ageController.text),
         address: addressController.text.trim(),
@@ -190,5 +216,15 @@ class SeekerProfileSettingScreen extends StatelessWidget {
 
       Get.off(BottomNavbar());
     }
+  }
+
+  Future<String> userUploadDp(File profilePic) async {
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    var storageRef =
+        FirebaseStorage.instance.ref().child('Users/dp/$currentUserId.jpg');
+
+    await storageRef.putFile(profilePic);
+    String userDpUrl = await storageRef.getDownloadURL();
+    return userDpUrl;
   }
 }

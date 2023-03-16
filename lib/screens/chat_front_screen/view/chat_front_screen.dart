@@ -71,6 +71,14 @@ class ChatFrontScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
               var chatPersonsList = snapshot.data!.docs;
+              if (chatPersonsList.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No Chats',
+                    style: subHeadingNormal,
+                  ),
+                );
+              }
               return ListView.separated(
                 padding: EdgeInsets.only(top: width * 0.08),
                 separatorBuilder: (context, index) => const Divider(
@@ -79,149 +87,144 @@ class ChatFrontScreen extends StatelessWidget {
                 itemCount: chatPersonsList.length,
                 itemBuilder: (context, index) {
                   return FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('Users')
-                          .doc(chatPersonsList[index].id)
-                          .get(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return Shimmer.fromColors(
-                            baseColor: Colors.white,
-                            highlightColor: Colors.grey,
-                            child: chatTileShimmers(),
-                          );
-                        }
-                        String name;
-                        log('role :${snapshot.data!.data()!['role']}');
-                        if (snapshot.data!.data()!['role'] == 'seeker') {
-                          name = snapshot.data!.data()!['profile']['name'];
-                        } else {
-                          name =
-                              snapshot.data!.data()!['profile']['companyName'];
-                        }
+                    future: FirebaseFirestore.instance
+                        .collection('Users')
+                        .doc(chatPersonsList[index].id)
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Shimmer.fromColors(
+                          baseColor: Colors.white,
+                          highlightColor: Colors.grey,
+                          child: chatTileShimmers(),
+                        );
+                      }
+                      String name;
+                      log('role :${snapshot.data!.data()!['role']}');
+                      if (snapshot.data!.data()!['role'] == 'seeker') {
+                        name = snapshot.data!.data()!['profile']['name'];
+                      } else {
+                        name = snapshot.data!.data()!['profile']['companyName'];
+                      }
 
-                        ChatModel chatModel =
-                            ChatModel.fromJson(chatPersonsList[index].data());
-                        //initializeDateFormatting();
+                      ChatModel chatModel =
+                          ChatModel.fromJson(chatPersonsList[index].data());
 
-                        //Intl.defaultLocale = 'es';
-                        DateTime time = DateTime.parse(chatModel.sendTime);
-                        final formatedTime = DateFormat("h:mm a").format(time);
-                        return Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: width * 0.06),
-                          child: InkWell(
-                            onTap: () async {
-                              var recipentDoc = await FirebaseFirestore.instance
-                                  .collection('Users')
-                                  .doc(chatPersonsList[index].id)
-                                  .get();
-                              if (recipentDoc.data()!['role'] == 'seeker') {
-                                log('seeker');
-                                ProfileSettingModel profileSettingModel =
-                                    ProfileSettingModel.fromJson(
-                                  recipentDoc.data()!['profile'],
-                                );
+                      //checking the message send time is today or not
+                      String formatedTime = getChatTileTime(chatModel);
 
-                                Get.to(
-                                  RecruiterChatPersonalScreen(
-                                      profileSettingModel: profileSettingModel,
-                                      recipentUID: chatPersonsList[index].id),
-                                );
-                              } else {
-                                RecruiterProfileModel recruiterProfileModel =
-                                    RecruiterProfileModel.fromJson(
-                                  recipentDoc.data()!['profile'],
-                                );
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+                        child: InkWell(
+                          onTap: () async {
+                            var recipentDoc = await FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(chatPersonsList[index].id)
+                                .get();
+                            if (recipentDoc.data()!['role'] == 'seeker') {
+                              log('seeker');
+                              ProfileSettingModel profileSettingModel =
+                                  ProfileSettingModel.fromJson(
+                                recipentDoc.data()!['profile'],
+                              );
 
-                                Get.to(
-                                  UserChatPersonalScreen(
-                                      recruiterProfileModel:
-                                          recruiterProfileModel,
-                                      recipentUID: chatPersonsList[index].id),
-                                );
-                              }
-                            },
-                            child: Material(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.all(width * 0.02),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const CircleAvatar(
-                                      radius: 26,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
-                                    ),
-                                    SizedBox(
-                                      width: width * 0.04,
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding:
-                                            EdgeInsets.only(top: width * 0.01),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              name,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                              ),
+                              Get.to(
+                                RecruiterChatPersonalScreen(
+                                    profileSettingModel: profileSettingModel,
+                                    recipentUID: chatPersonsList[index].id),
+                              );
+                            } else {
+                              RecruiterProfileModel recruiterProfileModel =
+                                  RecruiterProfileModel.fromJson(
+                                recipentDoc.data()!['profile'],
+                              );
+
+                              Get.to(
+                                UserChatPersonalScreen(
+                                    recruiterProfileModel:
+                                        recruiterProfileModel,
+                                    recipentUID: chatPersonsList[index].id),
+                              );
+                            }
+                          },
+                          child: Material(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(width * 0.02),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const CircleAvatar(
+                                    radius: 26,
+                                    backgroundImage: AssetImage(
+                                        'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.04,
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(top: width * 0.01),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            name,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
                                             ),
-                                            SizedBox(
-                                              height: height * 0.006,
-                                            ),
-                                            Text(
-                                              chatModel.content,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            )
-                                          ],
-                                        ),
+                                          ),
+                                          SizedBox(
+                                            height: height * 0.006,
+                                          ),
+                                          Text(
+                                            chatModel.content,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        ],
                                       ),
                                     ),
-                                    //const Spacer(),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: width * 0.021),
-                                          child: Text(
-                                            formatedTime,
-                                            style:
-                                                const TextStyle(fontSize: 11),
-                                          ),
+                                  ),
+                                  //const Spacer(),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(top: width * 0.021),
+                                        child: Text(
+                                          formatedTime,
+                                          style: const TextStyle(fontSize: 11),
                                         ),
-                                        badges.Badge(
-                                          badgeContent: const Text(
-                                            '3',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          badgeStyle: badges.BadgeStyle(
-                                            badgeColor: Colors.cyan.shade300,
-                                            padding:
-                                                EdgeInsets.all(width * 0.015),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                      ),
+                                      badges.Badge(
+                                        badgeContent: const Text(
+                                          '3',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        badgeStyle: badges.BadgeStyle(
+                                          badgeColor: Colors.cyan.shade300,
+                                          padding:
+                                              EdgeInsets.all(width * 0.015),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        );
-                      });
+                        ),
+                      );
+                    },
+                  );
                 },
               );
             },
@@ -229,6 +232,49 @@ class ChatFrontScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //:::::::::::::::::::::::::::::::::--------------------::::::::::::::::::
+  //checking the message sending time is today or not ..
+  //if today it will return time, else return the date
+
+  String getChatTileTime(ChatModel chatModel) {
+    List<String> monthList = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    DateTime dateTime = DateTime.parse(chatModel.sendTime);
+    DateTime dateTimeToday = DateTime.now();
+    if (dateTime.year == dateTimeToday.year &&
+        dateTime.month == dateTimeToday.month &&
+        dateTime.day == dateTimeToday.day) {
+      return DateFormat("h:mm a").format(dateTime);
+      // if (dateTime.hour > 12) {
+      //   return '${dateTime.hour - 12} : ${dateTime.minute} PM';
+      // } else {
+      //   return '${dateTime.hour}:${dateTime.minute} AM';
+      // }
+    } else if (dateTime.year == dateTimeToday.year &&
+        dateTime.month == dateTimeToday.month &&
+        dateTime.day == dateTimeToday.day - 1) {
+      return 'yesterday';
+    } else if (dateTime.year == dateTimeToday.year) {
+      String month = monthList[dateTime.month - 1];
+      return '$month-${dateTime.day}';
+    } else {
+      String month = monthList[dateTime.month - 1];
+      return '${dateTime.year}-$month-${dateTime.day}';
+    }
   }
 
   //shimmers for chat Tile

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/view/add_new_jobs.dart';
-import 'package:job_portal/screens/Recruter_screens/home/view/home.dart';
+import 'package:job_portal/screens/Recruter_screens/home/view/widgets/vacancylist_in_home_widget.dart';
 import 'package:lottie/lottie.dart';
 
 class AllJobsScreen extends StatelessWidget {

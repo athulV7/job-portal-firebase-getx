@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FindJobsController extends GetxController {
+  bool isSaved = false;
   String applyButton = 'notApplied';
 
   Future<void> checkUserJobApplied(String userID, String currentJobId) async {
@@ -59,5 +61,14 @@ class FindJobsController extends GetxController {
     }
 
     log('Current Applide status: $applyButton');
+  }
+
+  //------------search-----------
+  final searchController = TextEditingController();
+
+  listenSearchController() {
+    searchController.addListener(() {
+      update();
+    });
   }
 }

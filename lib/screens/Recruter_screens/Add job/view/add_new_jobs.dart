@@ -255,6 +255,14 @@ class AddJobScreen extends StatelessWidget {
     if (addJobController.formKeyJob.currentState!.validate()) {
       if (addJobController.selectedIndex != null &&
           addJobController.selectedOption != null) {
+        String recruiterUID = FirebaseAuth.instance.currentUser!.uid;
+
+        var jobDocRef = FirebaseFirestore.instance
+            .collection('recruiter')
+            .doc(recruiterUID)
+            .collection('vacancies')
+            .doc();
+
         AddJobModel addJobModel = AddJobModel(
           title: titleController.text,
           description: descriptionController.text,
@@ -267,14 +275,11 @@ class AddJobScreen extends StatelessWidget {
           location: locationController.text,
           industry: addJobController.selectedOption,
           createdTime: DateTime.now().toString(),
+          recruiterID: recruiterUID,
+          jobId: jobDocRef.id,
         );
         //-----------
-        String recruiterUID = FirebaseAuth.instance.currentUser!.uid;
-        var jobDocRef = FirebaseFirestore.instance
-            .collection('recruiter')
-            .doc(recruiterUID)
-            .collection('vacancies')
-            .doc();
+
         FirebaseFirestore.instance
             .collection('recruiter')
             .doc(recruiterUID)

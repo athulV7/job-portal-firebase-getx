@@ -1,4 +1,5 @@
 class RecruiterProfileModel {
+  String? profilePic;
   String companyName;
   String companyEmail;
   String establishedDate;
@@ -6,6 +7,7 @@ class RecruiterProfileModel {
   String country;
 
   RecruiterProfileModel({
+    this.profilePic,
     required this.companyName,
     required this.companyEmail,
     required this.establishedDate,
@@ -15,6 +17,7 @@ class RecruiterProfileModel {
 
   factory RecruiterProfileModel.fromJson(Map<String, dynamic> json) =>
       RecruiterProfileModel(
+        profilePic: json['profilePic'],
         companyName: json['companyName'],
         companyEmail: json['companyEmail'],
         establishedDate: json['establishedDate'],
@@ -24,6 +27,7 @@ class RecruiterProfileModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'profilePic': profilePic,
       'companyName': companyName,
       'companyEmail': companyEmail,
       'establishedDate': establishedDate,

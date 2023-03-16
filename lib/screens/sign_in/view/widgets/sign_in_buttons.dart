@@ -141,7 +141,7 @@ class SignInButtons extends StatelessWidget {
         log("usernotfound");
         Get.snackbar(
           'Error',
-          'User not exist. please sign in ',
+          'User not exist. please sign up ',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,

@@ -10,6 +10,8 @@ class AddJobModel {
   String location;
   String? industry;
   String createdTime;
+  String jobId;
+  String recruiterID;
 
   AddJobModel({
     required this.title,
@@ -23,6 +25,8 @@ class AddJobModel {
     required this.location,
     required this.industry,
     required this.createdTime,
+    required this.jobId,
+    required this.recruiterID,
   });
 
   factory AddJobModel.fromJson(Map<String, dynamic> json) => AddJobModel(
@@ -37,6 +41,8 @@ class AddJobModel {
         positions: json['positions'],
         qualification: json['qualification'],
         createdTime: json['createdTime'],
+        jobId: json['jobId'],
+        recruiterID: json['recruiterID'],
       );
 
   Map<String, dynamic> toJson() {
@@ -52,6 +58,8 @@ class AddJobModel {
       'positions': positions,
       'qualification': qualification,
       'createdTime': createdTime,
+      'jobId': jobId,
+      'recruiterID': recruiterID,
     };
   }
 }

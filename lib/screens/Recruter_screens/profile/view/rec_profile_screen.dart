@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
+import 'package:job_portal/screens/Recruter_screens/profile/view/rec_profile_edit_screen.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
 
@@ -32,11 +33,11 @@ class RecProfileScreen extends StatelessWidget {
           )
         ],
       ),
-      body: FutureBuilder(
-          future: FirebaseFirestore.instance
+      body: StreamBuilder(
+          stream: FirebaseFirestore.instance
               .collection('Users')
               .doc(currentUserID)
-              .get(),
+              .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const CircularProgressIndicator();
@@ -57,7 +58,7 @@ class RecProfileScreen extends StatelessWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        height: height * 0.2,
+                        height: height * 0.18,
                         margin: EdgeInsets.only(top: width * 0.19),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
@@ -73,18 +74,28 @@ class RecProfileScreen extends StatelessWidget {
                               ),
                             ),
                             SizedBox(
-                              height: width * 0.07,
+                              height: width * 0.03,
+                            ),
+                            Text(
+                              recruiterProfileModel.companyAddress,
                             ),
                           ],
                         ),
                       ),
-                      const Center(
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundImage: AssetImage(
-                            'assets/images/Screenshot 2023-03-06 113206.png',
-                          ),
-                        ),
+                      Center(
+                        child: recruiterProfileModel.profilePic != null
+                            ? CircleAvatar(
+                                radius: 60,
+                                backgroundImage: NetworkImage(
+                                  recruiterProfileModel.profilePic!,
+                                ),
+                              )
+                            : const CircleAvatar(
+                                radius: 60,
+                                backgroundImage: AssetImage(
+                                  'assets/images/Screenshot 2023-03-06 113206.png',
+                                ),
+                              ),
                       ),
                     ],
                   ),
@@ -110,6 +121,29 @@ class RecProfileScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                               color: Colors.white,
                             ),
+                            child: MaterialButton(
+                              onPressed: () async {
+                                Get.to(RecruiterProfileEditScreen(
+                                  recruiterProfileModel: recruiterProfileModel,
+                                ));
+                              },
+                              height: height * 0.08,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              color: Colors.white,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text('Edit Profile  '),
+                                  Icon(
+                                    Icons.edit_note,
+                                    size: 20,
+                                    color: Colors.grey.shade700,
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                           Expanded(
                             child: Container(
@@ -126,6 +160,37 @@ class RecProfileScreen extends StatelessWidget {
                                   topRight: Radius.circular(8),
                                 ),
                                 color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(width * 0.04),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: height * 0.02,
+                                    ),
+                                    const Text('About',
+                                        style: subHeadingNormal),
+                                    SizedBox(
+                                      height: height * 0.022,
+                                    ),
+                                    Text(recruiterProfileModel.companyEmail),
+                                    SizedBox(
+                                      height: height * 0.015,
+                                    ),
+                                    Text(recruiterProfileModel.companyAddress),
+                                    SizedBox(
+                                      height: height * 0.015,
+                                    ),
+                                    Text(recruiterProfileModel.country),
+                                    SizedBox(
+                                      height: height * 0.015,
+                                    ),
+                                    Text(
+                                      "Established Date : ${recruiterProfileModel.establishedDate}",
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

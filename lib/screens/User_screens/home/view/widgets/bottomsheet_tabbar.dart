@@ -4,7 +4,7 @@ import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
 import 'package:job_portal/screens/User_screens/home/view/widgets/company_tab.dart';
 import 'package:job_portal/screens/User_screens/home/view/widgets/job_description.dart';
-import 'package:job_portal/screens/User_screens/home/view/widgets/job_details_bottomsheet.dart';
+import 'package:job_portal/screens/User_screens/home/view/widgets/job_details.dart';
 
 class BottomSheetTabBar extends StatelessWidget {
   const BottomSheetTabBar({
