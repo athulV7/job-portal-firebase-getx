@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
 import 'package:job_portal/screens/Recruter_screens/applied_users_profile_screen/applied_users_profile_screen.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
+import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
@@ -51,11 +51,39 @@ class JobAppliedDetails extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            height: width * 0.16,
-                            width: width * 0.16,
-                            color: Colors.amber,
-                          ),
+                          FutureBuilder(
+                              future: FirebaseFirestore.instance
+                                  .collection('Users')
+                                  .doc(addJobModel.recruiterID)
+                                  .get(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const SizedBox();
+                                }
+                                RecruiterProfileModel recruiterProfileModel =
+                                    RecruiterProfileModel.fromJson(
+                                  snapshot.data!.data()!['profile'],
+                                );
+                                return Container(
+                                  height: width * 0.16,
+                                  width: width * 0.16,
+                                  color: Colors.white54,
+                                  child: recruiterProfileModel.profilePic ==
+                                          null
+                                      ? const Image(
+                                          fit: BoxFit.cover,
+                                          image: AssetImage(
+                                            'assets/images/Screenshot 2023-03-06 113206.png',
+                                          ),
+                                        )
+                                      : Image(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(
+                                            recruiterProfileModel.profilePic!,
+                                          ),
+                                        ),
+                                );
+                              }),
                           SizedBox(
                             width: width * 0.02,
                           ),
@@ -246,8 +274,9 @@ class AppliedPeoplesWidget extends StatelessWidget {
             if (!snapshot.hasData) {
               return appliedPeopleTileShimmers();
             }
-            String name = snapshot.data!.get('profile')['name'];
-            String occupation = snapshot.data!.get('profile')['occupation'];
+            ProfileSettingModel profileSettingModel =
+                ProfileSettingModel.fromJson(snapshot.data!.data()!['profile']);
+
             return Padding(
               padding: EdgeInsets.only(bottom: width * 0.03),
               child: Material(
@@ -262,11 +291,19 @@ class AppliedPeoplesWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 24,
-                        backgroundImage: AssetImage(
-                            'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
-                      ),
+                      profileSettingModel.profilePic == null ||
+                              profileSettingModel.profilePic == ""
+                          ? const CircleAvatar(
+                              radius: 24,
+                              backgroundImage: AssetImage(
+                                  'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
+                            )
+                          : CircleAvatar(
+                              radius: 24,
+                              backgroundImage: NetworkImage(
+                                profileSettingModel.profilePic!,
+                              ),
+                            ),
                       SizedBox(
                         width: width * 0.04,
                       ),
@@ -274,7 +311,7 @@ class AppliedPeoplesWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            name,
+                            profileSettingModel.name,
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
@@ -284,7 +321,7 @@ class AppliedPeoplesWidget extends StatelessWidget {
                             height: height * 0.006,
                           ),
                           Text(
-                            occupation,
+                            profileSettingModel.occupation,
                           )
                         ],
                       ),

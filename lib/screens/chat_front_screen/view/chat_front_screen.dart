@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -100,11 +101,17 @@ class ChatFrontScreen extends StatelessWidget {
                         );
                       }
                       String name;
+                      String defaultProfilePic;
+                      String recipientUID = chatPersonsList[index].id;
                       log('role :${snapshot.data!.data()!['role']}');
                       if (snapshot.data!.data()!['role'] == 'seeker') {
                         name = snapshot.data!.data()!['profile']['name'];
+                        defaultProfilePic =
+                            'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png';
                       } else {
                         name = snapshot.data!.data()!['profile']['companyName'];
+                        defaultProfilePic =
+                            'assets/images/Screenshot 2023-03-06 113206.png';
                       }
 
                       ChatModel chatModel =
@@ -157,11 +164,24 @@ class ChatFrontScreen extends StatelessWidget {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const CircleAvatar(
-                                    radius: 26,
-                                    backgroundImage: AssetImage(
-                                        'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
-                                  ),
+                                  snapshot.data!.data()!['profile']
+                                                  ['profilePic'] ==
+                                              null ||
+                                          snapshot.data!.data()!['profile']
+                                                  ['profilePic'] ==
+                                              ""
+                                      ? CircleAvatar(
+                                          radius: 26,
+                                          backgroundImage:
+                                              AssetImage(defaultProfilePic),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 26,
+                                          backgroundImage: NetworkImage(
+                                            snapshot.data!.data()!['profile']
+                                                ['profilePic'],
+                                          ),
+                                        ),
                                   SizedBox(
                                     width: width * 0.04,
                                   ),
@@ -204,17 +224,45 @@ class ChatFrontScreen extends StatelessWidget {
                                           style: const TextStyle(fontSize: 11),
                                         ),
                                       ),
-                                      badges.Badge(
-                                        badgeContent: const Text(
-                                          '3',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        badgeStyle: badges.BadgeStyle(
-                                          badgeColor: Colors.cyan.shade300,
-                                          padding:
-                                              EdgeInsets.all(width * 0.015),
-                                        ),
-                                      )
+                                      StreamBuilder(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('Chat')
+                                              .doc(currentUserID)
+                                              .collection(recipientUID)
+                                              .snapshots(),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return const SizedBox();
+                                            }
+                                            var unseenDocs = snapshot.data!.docs
+                                                .where((element) {
+                                              ChatModel chatModel =
+                                                  ChatModel.fromJson(
+                                                      element.data());
+                                              return (chatModel
+                                                          .deliveryStatus !=
+                                                      'seen' &&
+                                                  chatModel.fromUID ==
+                                                      recipientUID);
+                                            });
+                                            return unseenDocs.isEmpty
+                                                ? const SizedBox()
+                                                : badges.Badge(
+                                                    badgeContent: Text(
+                                                      unseenDocs.length
+                                                          .toString(),
+                                                      style: const TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    badgeStyle:
+                                                        badges.BadgeStyle(
+                                                      badgeColor:
+                                                          Colors.cyan.shade300,
+                                                      padding: EdgeInsets.all(
+                                                          width * 0.015),
+                                                    ),
+                                                  );
+                                          })
                                     ],
                                   ),
                                 ],

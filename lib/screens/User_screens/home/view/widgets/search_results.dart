@@ -67,6 +67,7 @@ class SearchResults extends StatelessWidget {
                       );
                     } else {
                       return ListView.builder(
+                          physics: const ScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: searchResults.length,
                           itemBuilder: (context, index) {

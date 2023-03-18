@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Main_screen/main_screen.dart';
+import 'package:job_portal/screens/User_screens/profile/view/cv_open_page.dart';
 import 'package:job_portal/screens/User_screens/profile/view/profile_edit_screen.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -16,6 +22,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var currentUserID = FirebaseAuth.instance.currentUser!.uid;
+    String userCvUrl = "";
     return Scaffold(
       appBar: AppBar(actions: [
         IconButton(
@@ -88,19 +95,20 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           Center(
-                            child: profileSettingModel.profilePic != null
-                                ? CircleAvatar(
-                                    radius: 60,
-                                    backgroundImage: NetworkImage(
-                                      profileSettingModel.profilePic!,
-                                    ),
-                                  )
-                                : const CircleAvatar(
+                            child: profileSettingModel.profilePic == null ||
+                                    profileSettingModel.profilePic == ""
+                                ? const CircleAvatar(
                                     radius: 60,
                                     backgroundImage: AssetImage(
                                       'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png',
                                     ),
                                     backgroundColor: Colors.green,
+                                  )
+                                : CircleAvatar(
+                                    radius: 60,
+                                    backgroundImage: NetworkImage(
+                                      profileSettingModel.profilePic!,
+                                    ),
                                   ),
                           ),
                         ],
@@ -134,7 +142,23 @@ class ProfileScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: MaterialButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles();
+
+                                      if (result != null) {
+                                        File file = File(
+                                          result.files.single.path.toString(),
+                                        );
+                                        userCvUrl = await userUploadCV(file);
+                                        FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .doc(currentUserID)
+                                            .update({'cv': userCvUrl});
+                                      } else {
+                                        // User canceled the picker
+                                      }
+                                    },
                                     height: height * 0.08,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
@@ -209,6 +233,73 @@ class ProfileScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .doc(currentUserID)
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      var cvUrl = snapshot.data!.data()!['cv'];
+                                      return cvUrl == null || cvUrl == ""
+                                          ? SizedBox(
+                                              height: height * 0.0001,
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                Get.to(
+                                                  ResumeOpenPage(
+                                                      userCvUrl: cvUrl),
+                                                );
+                                              },
+                                              child: Container(
+                                                height: height * 0.05,
+                                                //width: width / 2.4,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Colors.grey,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.close,
+                                                      size: 19,
+                                                      color: Colors.transparent,
+                                                    ),
+                                                    Text(
+                                                      '${profileSettingModel.name}_cv.pdf',
+                                                      style: const TextStyle(
+                                                        color: Colors.blue,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        deleteCV();
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.close,
+                                                        size: 19,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                    },
+                                  ),
+                                  SizedBox(height: height * 0.016),
                                   MaterialButton(
                                     height: height * 0.08,
                                     elevation: 1,
@@ -304,5 +395,30 @@ class ProfileScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<String> userUploadCV(File file) async {
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    var storageRef =
+        FirebaseStorage.instance.ref().child('Users/cv/$currentUserId.pdf');
+
+    await storageRef.putFile(file);
+    String userCvUrl = await storageRef.getDownloadURL();
+    return userCvUrl;
+  }
+
+  //----------
+  void deleteCV() async {
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    var storageRef =
+        FirebaseStorage.instance.ref().child('Users/cv/$currentUserId.pdf');
+
+    await storageRef.delete();
+
+    //remove cv from users profile
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(currentUserId)
+        .update({'cv': null});
   }
 }

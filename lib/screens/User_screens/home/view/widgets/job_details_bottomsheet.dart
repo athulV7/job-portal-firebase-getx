@@ -7,6 +7,7 @@ import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
 import 'package:job_portal/screens/User_screens/home/controller/findjobs_controller.dart';
 import 'package:job_portal/screens/User_screens/home/view/widgets/bottomsheet_tabbar.dart';
+import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 
 class JobDetailsBottomSheetwidget extends StatelessWidget {
   JobDetailsBottomSheetwidget({
@@ -31,20 +32,41 @@ class JobDetailsBottomSheetwidget extends StatelessWidget {
             SizedBox(
               height: height * 0.01,
             ),
-            Container(
-              height: width * 0.15,
-              width: width * 0.15,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.amber,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: const Image(
-                  image: AssetImage('assets/images/14624324.jpg'),
-                ),
-              ),
-            ),
+            FutureBuilder(
+                future: FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(addJobModel.recruiterID)
+                    .get(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SizedBox();
+                  }
+                  RecruiterProfileModel recruiterProfileModel =
+                      RecruiterProfileModel.fromJson(
+                    snapshot.data!.data()!['profile'],
+                  );
+                  return Container(
+                    height: width * 0.15,
+                    width: width * 0.15,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.amber,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: recruiterProfileModel.profilePic == null
+                          ? const Image(
+                              image: AssetImage(
+                                'assets/images/Screenshot 2023-03-06 113206.png',
+                              ),
+                            )
+                          : Image(
+                              image: NetworkImage(
+                                  recruiterProfileModel.profilePic!),
+                            ),
+                    ),
+                  );
+                }),
             Text(
               addJobModel.title,
               style: GoogleFonts.robotoSlab(

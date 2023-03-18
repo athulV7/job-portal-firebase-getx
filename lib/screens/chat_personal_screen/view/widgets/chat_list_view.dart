@@ -26,6 +26,24 @@ class ChatListView extends StatelessWidget {
           itemBuilder: (context, index) {
             var messageDoc = snapshot.data!.docs[index];
             ChatModel chatModel = ChatModel.fromJson(messageDoc.data());
+
+            //for checking the messages delivery status
+            if (chatModel.fromUID == recipentUID) {
+              chatModel.deliveryStatus = 'seen';
+              FirebaseFirestore.instance
+                  .collection('Chat')
+                  .doc(recipentUID)
+                  .collection(currentUserID)
+                  .doc(chatModel.sendTime)
+                  .update(chatModel.toJson());
+
+              FirebaseFirestore.instance
+                  .collection('Chat')
+                  .doc(currentUserID)
+                  .collection(recipentUID)
+                  .doc(chatModel.sendTime)
+                  .update(chatModel.toJson());
+            }
             DateTime time = DateTime.parse(chatModel.sendTime);
             final formatedTime = DateFormat("h:mm a").format(time);
             return UnconstrainedBox(
@@ -57,6 +75,7 @@ class ChatListView extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(width * 0.023),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           chatModel.content,
@@ -67,9 +86,18 @@ class ChatListView extends StatelessWidget {
                                 : Colors.white,
                           ),
                         ),
-                        // Text(
-                        //   formatedTime,
-                        // ),
+                        Text(
+                          formatedTime,
+                          style: chatModel.fromUID != recipentUID
+                              ? TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.white.withOpacity(0.8),
+                                )
+                              : TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey.shade600,
+                                ),
+                        ),
                       ],
                     ),
                   ),

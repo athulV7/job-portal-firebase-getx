@@ -7,6 +7,7 @@ import 'package:job_portal/screens/Recruter_screens/applied_users_profile_screen
 import 'package:job_portal/screens/Recruter_screens/home/view/widgets/vacancylist_in_home_widget.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeScreenWidget extends StatelessWidget {
   const HomeScreenWidget({
@@ -135,8 +136,10 @@ class HomeScreenWidget extends StatelessWidget {
                             .get(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                            return Shimmer.fromColors(
+                              child: recentAppliedShimmers(),
+                              baseColor: Colors.white,
+                              highlightColor: Colors.grey,
                             );
                           }
 
@@ -164,11 +167,23 @@ class HomeScreenWidget extends StatelessWidget {
                                       //crossAxisAlignment: CrossAxisAlignment.start,
 
                                       children: [
-                                        const CircleAvatar(
-                                          radius: 24,
-                                          backgroundImage: AssetImage(
-                                              'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
-                                        ),
+                                        profileSettingModel.profilePic ==
+                                                    null ||
+                                                profileSettingModel
+                                                        .profilePic ==
+                                                    ""
+                                            ? const CircleAvatar(
+                                                radius: 24,
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
+                                              )
+                                            : CircleAvatar(
+                                                radius: 24,
+                                                backgroundImage: NetworkImage(
+                                                  profileSettingModel
+                                                      .profilePic!,
+                                                ),
+                                              ),
                                         SizedBox(
                                           width: width * 0.04,
                                         ),
@@ -249,6 +264,57 @@ class HomeScreenWidget extends StatelessWidget {
                   ),
                 );
               })
+        ],
+      ),
+    );
+  }
+
+  recentAppliedShimmers() {
+    return Material(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const CircleAvatar(
+                radius: 24,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'gyhvfcghcgvhjcvfgh',
+                  ),
+                  SizedBox(
+                    height: height * 0.01,
+                  ),
+                  const Text(
+                    'fghcyhcfhjcf',
+                  )
+                ],
+              ),
+              const Spacer(),
+              MaterialButton(
+                onPressed: () {},
+                // color: Colors.white,
+                // shape: RoundedRectangleBorder(
+                //   side: const BorderSide(
+                //     color: Colors.cyan,
+                //   ),
+                //   borderRadius: BorderRadius.circular(5),
+                // ),
+                child: const Text(
+                  'View Profile',
+                ),
+              ),
+            ],
+          ),
+          const Divider(),
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text(
+              'See Resume',
+            ),
+          ),
         ],
       ),
     );

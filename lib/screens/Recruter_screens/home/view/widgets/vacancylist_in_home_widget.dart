@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +8,7 @@ import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_mode
 import 'package:job_portal/screens/Recruter_screens/All_jobs/view/widgets/job_applied_details.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 
 class VacancyJobsInHomeWidget extends StatelessWidget {
   const VacancyJobsInHomeWidget({
@@ -27,6 +30,7 @@ class VacancyJobsInHomeWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         AddJobModel addJobModel =
             AddJobModel.fromJson(vacancyList[index].data());
+
         return GestureDetector(
           onTap: () {
             var currentJobId = vacancyList[index].id;
@@ -54,11 +58,35 @@ class VacancyJobsInHomeWidget extends StatelessWidget {
                       SizedBox(
                         height: width * 0.16,
                         width: width * 0.16,
-                        child: const Image(
-                          fit: BoxFit.cover,
-                          image: AssetImage(
-                              'assets/images/Screenshot 2023-03-06 113206.png'),
-                        ),
+                        child: FutureBuilder(
+                            future: FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(addJobModel.recruiterID)
+                                .get(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const SizedBox();
+                              }
+                              log(snapshot.data!.data()!['profile']
+                                      ['profilePic'] ??
+                                  'null');
+                              RecruiterProfileModel recruiterProfileModel =
+                                  RecruiterProfileModel.fromJson(
+                                      snapshot.data!.data()!['profile']);
+                              return recruiterProfileModel.profilePic == null
+                                  ? const Image(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(
+                                        'assets/images/Screenshot 2023-03-06 113206.png',
+                                      ),
+                                    )
+                                  : Image(
+                                      image: NetworkImage(
+                                        recruiterProfileModel.profilePic!,
+                                      ),
+                                      fit: BoxFit.cover,
+                                    );
+                            }),
                       ),
                       SizedBox(
                         width: width * 0.02,

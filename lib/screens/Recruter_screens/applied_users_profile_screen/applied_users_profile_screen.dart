@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
+import 'package:job_portal/screens/User_screens/profile/view/cv_open_page.dart';
 import 'package:job_portal/screens/chat_personal_screen/view/recruiter_chat_personal_screen.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
 import 'package:job_portal/screens/sign_in/controller/sign_in_controller.dart';
@@ -102,7 +104,8 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                   ),
                 ),
                 Center(
-                  child: profileSettingModel.profilePic == null
+                  child: profileSettingModel.profilePic == null ||
+                          profileSettingModel.profilePic == ""
                       ? const CircleAvatar(
                           radius: 60,
                           backgroundImage: AssetImage(
@@ -136,7 +139,24 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                         color: Colors.white,
                       ),
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          var userRef = await FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(recipentUID)
+                              .get();
+                          var userCv = await userRef.data()!['cv'];
+
+                          if (userCv != null && userCv != "") {
+                            Get.to(ResumeOpenPage(userCvUrl: userCv));
+                          } else {
+                            Get.snackbar(
+                              'CV',
+                              "This user doesn't have a CV",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.green.withOpacity(0.3),
+                            );
+                          }
+                        },
                         height: height * 0.08,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),

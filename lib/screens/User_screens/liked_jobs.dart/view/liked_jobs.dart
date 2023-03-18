@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_model.dart';
 import 'package:job_portal/screens/User_screens/home/view/widgets/job_details_bottomsheet.dart';
+import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 import 'package:lottie/lottie.dart';
 
 class LikedJobs extends StatelessWidget {
@@ -97,14 +98,41 @@ class LikedJobs extends StatelessWidget {
                                   //padding: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(9),
-                                    color: Colors.amber,
+                                    color: Colors.white,
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(9),
-                                    child: const Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                          'assets/images/Screenshot 2023-03-06 113206.png'),
+                                    child: FutureBuilder(
+                                      future: FirebaseFirestore.instance
+                                          .collection('Users')
+                                          .doc(addJobModel.recruiterID)
+                                          .get(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return const SizedBox();
+                                        }
+                                        RecruiterProfileModel
+                                            recruiterProfileModel =
+                                            RecruiterProfileModel.fromJson(
+                                          snapshot.data!.data()!['profile'],
+                                        );
+                                        return recruiterProfileModel
+                                                    .profilePic ==
+                                                null
+                                            ? const Image(
+                                                fit: BoxFit.cover,
+                                                image: AssetImage(
+                                                  'assets/images/Screenshot 2023-03-06 113206.png',
+                                                ),
+                                              )
+                                            : Image(
+                                                fit: BoxFit.cover,
+                                                image: NetworkImage(
+                                                  recruiterProfileModel
+                                                      .profilePic!,
+                                                ),
+                                              );
+                                      },
                                     ),
                                   ),
                                 ),

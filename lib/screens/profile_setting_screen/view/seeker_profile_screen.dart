@@ -26,7 +26,6 @@ class SeekerProfileSettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String currentUserID = FirebaseAuth.instance.currentUser!.uid;
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(width * 0.03),

@@ -93,6 +93,7 @@ class UserChatPersonalScreen extends StatelessWidget {
                                 sendTime: DateTime.now().toString(),
                                 fromUID: currentUserId,
                                 toUID: recipentUID,
+                                deliveryStatus: 'send',
                               );
 
                               //save msg inside the recruiter id

@@ -8,6 +8,7 @@ import 'package:job_portal/screens/Recruter_screens/All_jobs/view/widgets/job_ap
 import 'package:job_portal/screens/Recruter_screens/home/controller/home_screen_controller.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 
 class SearchResultWidget extends StatelessWidget {
   SearchResultWidget({super.key});
@@ -83,11 +84,36 @@ class SearchResultWidget extends StatelessWidget {
                                     SizedBox(
                                       height: width * 0.16,
                                       width: width * 0.16,
-                                      child: const Image(
-                                        fit: BoxFit.cover,
-                                        image: AssetImage(
-                                            'assets/images/Screenshot 2023-03-06 113206.png'),
-                                      ),
+                                      child: FutureBuilder(
+                                          future: FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(addJobModel.recruiterID)
+                                              .get(),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return const SizedBox();
+                                            }
+                                            RecruiterProfileModel
+                                                recruiterProfileModel =
+                                                RecruiterProfileModel.fromJson(
+                                                    snapshot.data!
+                                                        .data()!['profile']);
+                                            return recruiterProfileModel
+                                                        .profilePic ==
+                                                    null
+                                                ? const Image(
+                                                    fit: BoxFit.cover,
+                                                    image: AssetImage(
+                                                        'assets/images/Screenshot 2023-03-06 113206.png'),
+                                                  )
+                                                : Image(
+                                                    fit: BoxFit.cover,
+                                                    image: NetworkImage(
+                                                      recruiterProfileModel
+                                                          .profilePic!,
+                                                    ),
+                                                  );
+                                          }),
                                     ),
                                     SizedBox(
                                       width: width * 0.02,

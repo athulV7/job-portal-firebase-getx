@@ -13,53 +13,51 @@ class UserHomeScreenWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(width * 0.03),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Popular Jobs', style: subHeadlineStyle),
-              SizedBox(
-                height: height * 0.02,
-              ),
-              StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('recruiter')
-                    .snapshots(),
-                // .doc(recruiterUID)
-                // .collection('vacancies')
-                // .orderBy('createdTime', descending: true)
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(width * 0.03),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Popular Jobs', style: subHeadlineStyle),
+            SizedBox(
+              height: height * 0.02,
+            ),
+            StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('recruiter')
+                  .snapshots(),
+              // .doc(recruiterUID)
+              // .collection('vacancies')
+              // .orderBy('createdTime', descending: true)
 
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  var recruitersList = snapshot.data!.docs;
-                  if (recruitersList.isEmpty) {
-                    log(recruitersList.length.toString());
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          LottieBuilder.asset(
-                            'assets/lottie/103199-hiring-pt-2.json',
-                          ),
-                        ],
-                      ),
-                    );
-                  } else if (recruitersList.isNotEmpty) {
-                    return FindJobsList(
-                      recruiterList: recruitersList,
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                  // vacancies listview
-                },
-              ),
-            ],
-          ),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                var recruitersList = snapshot.data!.docs;
+                if (recruitersList.isEmpty) {
+                  log(recruitersList.length.toString());
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        LottieBuilder.asset(
+                          'assets/lottie/103199-hiring-pt-2.json',
+                        ),
+                      ],
+                    ),
+                  );
+                } else if (recruitersList.isNotEmpty) {
+                  return FindJobsList(
+                    recruiterList: recruitersList,
+                  );
+                } else {
+                  return const SizedBox();
+                }
+                // vacancies listview
+              },
+            ),
+          ],
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:job_portal/screens/Recruter_screens/Add%20job/model/add_job_mode
 import 'package:job_portal/screens/User_screens/home/controller/findjobs_controller.dart';
 import 'package:job_portal/screens/User_screens/home/view/widgets/job_details_bottomsheet.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
+import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
 
 class FindJobsList extends StatelessWidget {
   FindJobsList({super.key, required this.recruiterList});
@@ -65,15 +66,39 @@ class FindJobsList extends StatelessWidget {
                               //padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(9),
-                                color: Colors.amber,
+                                color: Colors.white54,
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(9),
-                                child: const Image(
-                                  fit: BoxFit.cover,
-                                  image: AssetImage(
-                                      'assets/images/Screenshot 2023-03-06 113206.png'),
-                                ),
+                                child: FutureBuilder(
+                                    future: FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .doc(addJobModel.recruiterID)
+                                        .get(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return SizedBox();
+                                      }
+                                      RecruiterProfileModel
+                                          recruiterProfileModel =
+                                          RecruiterProfileModel.fromJson(
+                                              snapshot.data!
+                                                  .data()!['profile']);
+                                      return recruiterProfileModel.profilePic ==
+                                              null
+                                          ? const Image(
+                                              fit: BoxFit.cover,
+                                              image: AssetImage(
+                                                  'assets/images/Screenshot 2023-03-06 113206.png'),
+                                            )
+                                          : Image(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(
+                                                recruiterProfileModel
+                                                    .profilePic!,
+                                              ),
+                                            );
+                                    }),
                               ),
                             ),
                             SizedBox(
