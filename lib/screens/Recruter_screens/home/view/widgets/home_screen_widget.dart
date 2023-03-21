@@ -5,6 +5,7 @@ import 'package:job_portal/core/common.dart';
 import 'package:job_portal/screens/Recruter_screens/All_jobs/view/all_jobs.dart';
 import 'package:job_portal/screens/Recruter_screens/applied_users_profile_screen/applied_users_profile_screen.dart';
 import 'package:job_portal/screens/Recruter_screens/home/view/widgets/vacancylist_in_home_widget.dart';
+import 'package:job_portal/screens/User_screens/profile/view/cv_open_page.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
@@ -241,15 +242,44 @@ class HomeScreenWidget extends StatelessWidget {
                                       height: height * 0.01,
                                     ),
                                     const Divider(),
-                                    ElevatedButton(
-                                      onPressed: () {},
-                                      child: const Text(
-                                        'See Resume',
-                                        style: TextStyle(
-                                          color: Colors.cyan,
-                                        ),
-                                      ),
-                                    ),
+                                    FutureBuilder(
+                                        future: FirebaseFirestore.instance
+                                            .collection('Users')
+                                            .doc(appliedUsersList[index]['uid'])
+                                            .get(),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const SizedBox();
+                                          }
+                                          return ElevatedButton(
+                                            onPressed: () async {
+                                              var cvUrl = await snapshot.data!
+                                                  .data()!['cv'];
+                                              if (cvUrl != null &&
+                                                  cvUrl != "") {
+                                                Get.to(
+                                                  ResumeOpenPage(
+                                                      userCvUrl: cvUrl),
+                                                );
+                                              } else {
+                                                Get.snackbar(
+                                                  'CV',
+                                                  "This user doesn't have a CV",
+                                                  snackPosition:
+                                                      SnackPosition.BOTTOM,
+                                                  backgroundColor: Colors.green
+                                                      .withOpacity(0.7),
+                                                );
+                                              }
+                                            },
+                                            child: const Text(
+                                              'See Resume',
+                                              style: TextStyle(
+                                                color: Colors.cyan,
+                                              ),
+                                            ),
+                                          );
+                                        }),
                                   ],
                                 ),
                               ),
@@ -295,13 +325,6 @@ class HomeScreenWidget extends StatelessWidget {
               const Spacer(),
               MaterialButton(
                 onPressed: () {},
-                // color: Colors.white,
-                // shape: RoundedRectangleBorder(
-                //   side: const BorderSide(
-                //     color: Colors.cyan,
-                //   ),
-                //   borderRadius: BorderRadius.circular(5),
-                // ),
                 child: const Text(
                   'View Profile',
                 ),

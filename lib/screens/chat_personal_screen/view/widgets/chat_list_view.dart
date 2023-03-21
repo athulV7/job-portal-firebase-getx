@@ -75,7 +75,7 @@ class ChatListView extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(width * 0.023),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           chatModel.content,
@@ -91,7 +91,7 @@ class ChatListView extends StatelessWidget {
                           style: chatModel.fromUID != recipentUID
                               ? TextStyle(
                                   fontSize: 10,
-                                  color: Colors.white.withOpacity(0.8),
+                                  color: Colors.teal.shade700.withOpacity(0.8),
                                 )
                               : TextStyle(
                                   fontSize: 10,

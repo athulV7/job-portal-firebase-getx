@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:job_portal/core/common.dart';
+import 'package:job_portal/screens/Recruter_screens/applied_users_profile_screen/widgets/user_more_details_widget.dart';
 import 'package:job_portal/screens/User_screens/profile/view/cv_open_page.dart';
 import 'package:job_portal/screens/chat_personal_screen/view/recruiter_chat_personal_screen.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/seeker_profile_model.dart';
@@ -28,101 +29,102 @@ class AppliedUsersProfileScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.only(
-          right: width * 0.03,
-          left: width * 0.03,
-          //bottom: width * 0.03,
-          top: width * 0.08,
-        ),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: height * 0.21,
-                  margin: EdgeInsets.only(top: width * 0.19),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.cyan.withOpacity(0.1),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: width * 0.18),
-                        child: Text(
-                          profileSettingModel.name,
-                          style: subHeadingNormal,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            right: width * 0.03,
+            left: width * 0.03,
+            //bottom: width * 0.03,
+            top: width * 0.08,
+          ),
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: height * 0.21,
+                    margin: EdgeInsets.only(top: width * 0.19),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.cyan.withOpacity(0.1),
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: width * 0.18),
+                          child: Text(
+                            profileSettingModel.name,
+                            style: subHeadingNormal,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: width * 0.025,
-                      ),
-                      Text(
-                        profileSettingModel.occupation,
-                      ),
-                      SizedBox(
-                        height: width * 0.03,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            MaterialButton(
-                              onPressed: () {
-                                Get.to(RecruiterChatPersonalScreen(
-                                  profileSettingModel: profileSettingModel,
-                                  recipentUID: recipentUID,
-                                ));
-                              },
-                              height: width * 0.1,
-                              minWidth: width * 0.66,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              color: Colors.white,
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    FontAwesomeIcons.facebookMessenger,
-                                    size: 20,
-                                    color: Colors.grey.shade700,
-                                  ),
-                                  SizedBox(
-                                    width: width * 0.03,
-                                  ),
-                                  const Text('Message'),
-                                ],
-                              ),
-                            ),
-                          ],
+                        SizedBox(
+                          height: width * 0.025,
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                Center(
-                  child: profileSettingModel.profilePic == null ||
-                          profileSettingModel.profilePic == ""
-                      ? const CircleAvatar(
-                          radius: 60,
-                          backgroundImage: AssetImage(
-                              'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
+                        Text(
+                          profileSettingModel.occupation,
+                        ),
+                        SizedBox(
+                          height: width * 0.03,
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: width * 0.03),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              MaterialButton(
+                                onPressed: () {
+                                  Get.to(RecruiterChatPersonalScreen(
+                                    profileSettingModel: profileSettingModel,
+                                    recipentUID: recipentUID,
+                                  ));
+                                },
+                                height: width * 0.1,
+                                minWidth: width * 0.66,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                color: Colors.white,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      FontAwesomeIcons.facebookMessenger,
+                                      size: 20,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                    SizedBox(
+                                      width: width * 0.03,
+                                    ),
+                                    const Text('Message'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         )
-                      : CircleAvatar(
-                          radius: 60,
-                          backgroundImage:
-                              NetworkImage(profileSettingModel.profilePic!),
-                        ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: Container(
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: profileSettingModel.profilePic == null ||
+                            profileSettingModel.profilePic == ""
+                        ? const CircleAvatar(
+                            radius: 60,
+                            backgroundImage: AssetImage(
+                                'assets/images/_anonymous-profile-grey-person-sticker-glitch-empty-profile.png'),
+                          )
+                        : CircleAvatar(
+                            radius: 60,
+                            backgroundImage:
+                                NetworkImage(profileSettingModel.profilePic!),
+                          ),
+                  ),
+                ],
+              ),
+              Container(
                 width: double.infinity,
-                height: height * 0.3,
+                //height: height * 0.3,
                 margin: EdgeInsets.only(top: width * 0.02),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -132,7 +134,7 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                   children: [
                     Container(
                       width: double.infinity,
-                      height: height * 0.08,
+                      //height: height * 0.08,
                       margin: EdgeInsets.all(width * 0.02),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -175,26 +177,25 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        height: height * 0.08,
-                        margin: EdgeInsets.only(
-                          left: width * 0.02,
-                          right: width * 0.02,
-                          //bottom: width * 0.02,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
-                        ),
+                    Container(
+                      width: double.infinity,
+                      //height: height * 0.08,
+                      margin: EdgeInsets.only(
+                        left: width * 0.02,
+                        right: width * 0.02,
+                        //bottom: width * 0.02,
                       ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                      ),
+                      child: UserMoreDetailsWidget(recipientUID: recipentUID),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

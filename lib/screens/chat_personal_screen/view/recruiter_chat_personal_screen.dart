@@ -30,15 +30,6 @@ class RecruiterChatPersonalScreen extends StatelessWidget {
           profileSettingModel.name,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              FontAwesomeIcons.ellipsisVertical,
-              size: 18,
-            ),
-          )
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(width * 0.03),

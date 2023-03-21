@@ -59,34 +59,35 @@ class VacancyJobsInHomeWidget extends StatelessWidget {
                         height: width * 0.16,
                         width: width * 0.16,
                         child: FutureBuilder(
-                            future: FirebaseFirestore.instance
-                                .collection('Users')
-                                .doc(addJobModel.recruiterID)
-                                .get(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const SizedBox();
-                              }
-                              log(snapshot.data!.data()!['profile']
-                                      ['profilePic'] ??
-                                  'null');
-                              RecruiterProfileModel recruiterProfileModel =
-                                  RecruiterProfileModel.fromJson(
-                                      snapshot.data!.data()!['profile']);
-                              return recruiterProfileModel.profilePic == null
-                                  ? const Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/images/Screenshot 2023-03-06 113206.png',
-                                      ),
-                                    )
-                                  : Image(
-                                      image: NetworkImage(
-                                        recruiterProfileModel.profilePic!,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    );
-                            }),
+                          future: FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(addJobModel.recruiterID)
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const SizedBox();
+                            }
+                            log(snapshot.data!.data()!['profile']
+                                    ['profilePic'] ??
+                                'null');
+                            RecruiterProfileModel recruiterProfileModel =
+                                RecruiterProfileModel.fromJson(
+                                    snapshot.data!.data()!['profile']);
+                            return recruiterProfileModel.profilePic == null
+                                ? const Image(
+                                    fit: BoxFit.cover,
+                                    image: AssetImage(
+                                      'assets/images/Screenshot 2023-03-06 113206.png',
+                                    ),
+                                  )
+                                : Image(
+                                    image: NetworkImage(
+                                      recruiterProfileModel.profilePic!,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  );
+                          },
+                        ),
                       ),
                       SizedBox(
                         width: width * 0.02,
