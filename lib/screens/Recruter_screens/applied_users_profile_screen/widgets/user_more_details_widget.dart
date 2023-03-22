@@ -17,7 +17,7 @@ class UserMoreDetailsWidget extends StatelessWidget {
           .get(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const SizedBox();
+          return const Center(child: CircularProgressIndicator());
         }
         var aboutUser = snapshot.data!.data()!['About'];
         var moreDetails = snapshot.data!.data()!['moreDetails'];

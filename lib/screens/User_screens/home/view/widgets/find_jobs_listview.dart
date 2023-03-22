@@ -8,6 +8,7 @@ import 'package:job_portal/screens/User_screens/home/controller/findjobs_control
 import 'package:job_portal/screens/User_screens/home/view/widgets/job_details_bottomsheet.dart';
 import 'package:job_portal/screens/User_screens/liked_jobs.dart/view/liked_jobs.dart';
 import 'package:job_portal/screens/profile_setting_screen/model/recuiter_profile_model.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FindJobsList extends StatelessWidget {
   FindJobsList({super.key, required this.recruiterList});
@@ -23,7 +24,7 @@ class FindJobsList extends StatelessWidget {
         builder: (context, snapshot) {
           //log(snapshot.data!.docs.first.id);
           if (!snapshot.hasData) {
-            return const SizedBox();
+            return CircularProgressIndicator();
           }
           var vacancyList = snapshot.data!;
 

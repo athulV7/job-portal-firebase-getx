@@ -38,6 +38,7 @@ class AppliedUsersProfileScreen extends StatelessWidget {
             top: width * 0.08,
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Stack(
                 children: [
@@ -124,7 +125,8 @@ class AppliedUsersProfileScreen extends StatelessWidget {
               ),
               Container(
                 width: double.infinity,
-                //height: height * 0.3,
+                //height: height / 1.7,
+                constraints: BoxConstraints(minHeight: height / 1.7),
                 margin: EdgeInsets.only(top: width * 0.02),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -179,7 +181,8 @@ class AppliedUsersProfileScreen extends StatelessWidget {
                     ),
                     Container(
                       width: double.infinity,
-                      //height: height * 0.08,
+                      //height: height / 2.1,
+                      constraints: BoxConstraints(minHeight: height / 1.8),
                       margin: EdgeInsets.only(
                         left: width * 0.02,
                         right: width * 0.02,
