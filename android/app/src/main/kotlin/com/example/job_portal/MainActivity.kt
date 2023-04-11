@@ -1,4 +1,4 @@
-package com.example.job_portal
+package com.hire_bridge.job_portal
 
 import io.flutter.embedding.android.FlutterActivity
 

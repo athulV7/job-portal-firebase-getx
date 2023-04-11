@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "328296129910",
-    "project_id": "job-portal-app-58192",
-    "storage_bucket": "job-portal-app-58192.appspot.com"
+    "project_number": "567624470810",
+    "project_id": "job-finder-app-15419",
+    "storage_bucket": "job-finder-app-15419.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:328296129910:android:be23e50c09159820090657",
+        "mobilesdk_app_id": "1:567624470810:android:9ea13ce4251f457f9f1ca3",
         "android_client_info": {
-          "package_name": "com.example.job_portal"
+          "package_name": "com.hire_bridge.job_portal"
         }
       },
       "oauth_client": [
         {
-          "client_id": "328296129910-8eau0v9kls88f6iljkq06dafhggh5h4i.apps.googleusercontent.com",
+          "client_id": "567624470810-ju6iholk77gvv58j23cds99el51i5fsp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD1T1tWU4wLjQpMlzrVzP5OXWT7Zk2DWvE"
+          "current_key": "AIzaSyCFB7c3frfxxVp-NUszm8mwP3fpgd8_3-E"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "328296129910-8eau0v9kls88f6iljkq06dafhggh5h4i.apps.googleusercontent.com",
+              "client_id": "567624470810-ju6iholk77gvv58j23cds99el51i5fsp.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -50,7 +50,7 @@ class JobDetailsBottomSheetwidget extends StatelessWidget {
                     width: width * 0.15,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.amber,
+                      color: Colors.white,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),

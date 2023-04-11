@@ -121,10 +121,7 @@ class ProfileScreen extends StatelessWidget {
                     //height: height * 0.3,
                     margin: EdgeInsets.only(top: width * 0.02),
                     decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8),
-                      ),
+                      borderRadius: BorderRadius.circular(8),
                       color: Colors.cyan.withOpacity(0.1),
                     ),
                     child: Column(
@@ -215,17 +212,14 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         Container(
                           width: double.infinity,
-                          //height: height * 0.08,
+                          //height: height * 0.45,
                           margin: EdgeInsets.only(
                             left: width * 0.02,
                             right: width * 0.02,
                             //bottom: width * 0.02,
                           ),
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              topRight: Radius.circular(8),
-                            ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
                             color: Colors.white,
                           ),
                           child: Padding(
